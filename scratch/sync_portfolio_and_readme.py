@@ -225,74 +225,81 @@ def sync_portfolio_and_readme():
             
             if sym not in portfolio["holdings"]:
                 # Pure Buy
-                shares_to_buy = deviation / (price * (1.0 + commission_coef))
-                net_cost = shares_to_buy * price
-                comm = net_cost * commission_coef
-                total_cost = net_cost + comm
-                
-                portfolio["cash"] -= total_cost
-                portfolio["holdings"][sym] = {
-                    'shares': shares_to_buy,
-                    'buy_price': price,
-                    'current_price': price
-                }
-                
-                trade_record = {
-                    'Date': latest_date,
-                    'Ticker': sym,
-                    'Action': 'BUY',
-                    'Shares': shares_to_buy,
-                    'Price': price,
-                    'Commission': comm,
-                    'Cash_Impact': -total_cost
-                }
-                trade_rows.append(trade_record)
-                trades_executed.append(trade_record)
+                shares_to_buy = int(deviation / (price * (1.0 + commission_coef)))
+                if shares_to_buy > 0:
+                    net_cost = shares_to_buy * price
+                    comm = net_cost * commission_coef
+                    total_cost = net_cost + comm
+                    
+                    portfolio["cash"] -= total_cost
+                    portfolio["holdings"][sym] = {
+                        'shares': shares_to_buy,
+                        'buy_price': price,
+                        'current_price': price
+                    }
+                    
+                    trade_record = {
+                        'Date': latest_date,
+                        'Ticker': sym,
+                        'Action': 'BUY',
+                        'Shares': float(shares_to_buy),
+                        'Price': price,
+                        'Commission': comm,
+                        'Cash_Impact': -total_cost
+                    }
+                    trade_rows.append(trade_record)
+                    trades_executed.append(trade_record)
             else:
                 # Rebalance check (if deviation > 5% allocation threshold)
                 if abs(deviation) > target_allocation * 0.05:
                     if deviation > 0:  # Buy to add
-                        shares_to_buy = deviation / (price * (1.0 + commission_coef))
-                        net_cost = shares_to_buy * price
-                        comm = net_cost * commission_coef
-                        total_cost = net_cost + comm
-                        
-                        portfolio["cash"] -= total_cost
-                        portfolio["holdings"][sym]['shares'] += shares_to_buy
-                        portfolio["holdings"][sym]['current_price'] = price
-                        
-                        trade_record = {
-                            'Date': latest_date,
-                            'Ticker': sym,
-                            'Action': 'BUY_REBAL',
-                            'Shares': shares_to_buy,
-                            'Price': price,
-                            'Commission': comm,
-                            'Cash_Impact': -total_cost
-                        }
-                        trade_rows.append(trade_record)
-                        trades_executed.append(trade_record)
+                        shares_to_buy = int(deviation / (price * (1.0 + commission_coef)))
+                        if shares_to_buy > 0:
+                            net_cost = shares_to_buy * price
+                            comm = net_cost * commission_coef
+                            total_cost = net_cost + comm
+                            
+                            portfolio["cash"] -= total_cost
+                            portfolio["holdings"][sym]['shares'] += shares_to_buy
+                            portfolio["holdings"][sym]['current_price'] = price
+                            
+                            trade_record = {
+                                'Date': latest_date,
+                                'Ticker': sym,
+                                'Action': 'BUY_REBAL',
+                                'Shares': float(shares_to_buy),
+                                'Price': price,
+                                'Commission': comm,
+                                'Cash_Impact': -total_cost
+                            }
+                            trade_rows.append(trade_record)
+                            trades_executed.append(trade_record)
                     else:  # Sell to trim
-                        shares_to_sell = abs(deviation) / price
-                        net_val = shares_to_sell * price
-                        comm = net_val * commission_coef
-                        net_cash = net_val - comm
-                        
-                        portfolio["cash"] += net_cash
-                        portfolio["holdings"][sym]['shares'] -= shares_to_sell
-                        portfolio["holdings"][sym]['current_price'] = price
-                        
-                        trade_record = {
-                            'Date': latest_date,
-                            'Ticker': sym,
-                            'Action': 'SELL_REBAL',
-                            'Shares': shares_to_sell,
-                            'Price': price,
-                            'Commission': comm,
-                            'Cash_Impact': net_cash
-                        }
-                        trade_rows.append(trade_record)
-                        trades_executed.append(trade_record)
+                        shares_to_sell = int(abs(deviation) / price)
+                        if shares_to_sell > 0:
+                            shares_to_sell = min(shares_to_sell, int(portfolio["holdings"][sym]['shares']))
+                            net_val = shares_to_sell * price
+                            comm = net_val * commission_coef
+                            net_cash = net_val - comm
+                            
+                            portfolio["cash"] += net_cash
+                            portfolio["holdings"][sym]['shares'] -= shares_to_sell
+                            portfolio["holdings"][sym]['current_price'] = price
+                            
+                            if portfolio["holdings"][sym]['shares'] <= 0:
+                                del portfolio["holdings"][sym]
+                                
+                            trade_record = {
+                                'Date': latest_date,
+                                'Ticker': sym,
+                                'Action': 'SELL_REBAL',
+                                'Shares': float(shares_to_sell),
+                                'Price': price,
+                                'Commission': comm,
+                                'Cash_Impact': net_cash
+                            }
+                            trade_rows.append(trade_record)
+                            trades_executed.append(trade_record)
                         
         # Save updated trade logs
         pd.DataFrame(trade_rows).to_csv(TRADE_LOG_PATH, index=False)

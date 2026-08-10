@@ -14,9 +14,9 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Metric | Value |
 | :--- | :--- |
-| 💰 **Total Net Asset Value (NAV)** | **₹99,900.10** |
-| 🏦 **Cash Balance** | **₹0.00** |
-| 📊 **Total Return (ROI)** | **-0.0999%** |
+| 💰 **Total Net Asset Value (NAV)** | **₹99,922.62** |
+| 🏦 **Cash Balance** | **₹22,542.22** |
+| 📊 **Total Return (ROI)** | **-0.0774%** |
 | 📅 **Last Synchronization** | **2026-08-10** |
 | 🏁 **Portfolio Start Date** | **2026-08-10** |
 
@@ -26,11 +26,10 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Stock Symbol | Sector | Shares | Avg Cost Price | Current Close | Market Value | ROI (%) | Allocation (%) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **3MINDIA** | diversified | 0.5565 | ₹35,900.00 | ₹35,900.00 | ₹19,980.02 | +0.00% | 20.0% |
-| **GESHIP** | logistics | 15.0226 | ₹1,330.00 | ₹1,330.00 | ₹19,980.02 | +0.00% | 20.0% |
-| **MCX** | financial_infrastructure | 7.1948 | ₹2,777.00 | ₹2,777.00 | ₹19,980.02 | +0.00% | 20.0% |
-| **HBLENGINE** | automobiles | 28.7834 | ₹694.15 | ₹694.15 | ₹19,980.02 | +0.00% | 20.0% |
-| **POLYCAB** | power_and_utilities | 2.1506 | ₹9,290.50 | ₹9,290.50 | ₹19,980.02 | +0.00% | 20.0% |
+| **GESHIP** | logistics | 15.0000 | ₹1,329.60 | ₹1,329.60 | ₹19,944.00 | +0.00% | 20.0% |
+| **MCX** | financial_infrastructure | 7.0000 | ₹2,777.00 | ₹2,777.00 | ₹19,439.00 | +0.00% | 19.5% |
+| **HBLENGINE** | automobiles | 28.0000 | ₹694.55 | ₹694.55 | ₹19,447.40 | +0.00% | 19.5% |
+| **POLYCAB** | power_and_utilities | 2.0000 | ₹9,275.00 | ₹9,275.00 | ₹18,550.00 | +0.00% | 18.6% |
 
 ---
 
@@ -38,11 +37,10 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Date | Ticker | Action | Shares | Price | Commission (10 bps) | Cash Impact |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| 2026-08-10 | **POLYCAB** | `BUY` | 2.1506 | ₹9,290.50 | ₹19.98 | ₹-20,000.00 |
-| 2026-08-10 | **HBLENGINE** | `BUY` | 28.7834 | ₹694.15 | ₹19.98 | ₹-20,000.00 |
-| 2026-08-10 | **MCX** | `BUY` | 7.1948 | ₹2,777.00 | ₹19.98 | ₹-20,000.00 |
-| 2026-08-10 | **GESHIP** | `BUY` | 15.0226 | ₹1,330.00 | ₹19.98 | ₹-20,000.00 |
-| 2026-08-10 | **3MINDIA** | `BUY` | 0.5565 | ₹35,900.00 | ₹19.98 | ₹-20,000.00 |
+| 2026-08-10 | **POLYCAB** | `BUY` | 2.0000 | ₹9,275.00 | ₹18.55 | ₹-18,568.55 |
+| 2026-08-10 | **HBLENGINE** | `BUY` | 28.0000 | ₹694.55 | ₹19.45 | ₹-19,466.85 |
+| 2026-08-10 | **MCX** | `BUY` | 7.0000 | ₹2,777.00 | ₹19.44 | ₹-19,458.44 |
+| 2026-08-10 | **GESHIP** | `BUY` | 15.0000 | ₹1,329.60 | ₹19.94 | ₹-19,963.94 |
 
 ---
 
