@@ -14,9 +14,9 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Metric | Value |
 | :--- | :--- |
-| 💰 **Total Net Asset Value (NAV)** | **₹149,850.26** |
-| 🏦 **Cash Balance** | **₹109.96** |
-| 📊 **Total Return (ROI)** | **-0.0998%** |
+| 💰 **Total Net Asset Value (NAV)** | **₹149,848.24** |
+| 🏦 **Cash Balance** | **₹742.99** |
+| 📊 **Total Return (ROI)** | **-0.1012%** |
 | 📅 **Last Synchronization** | **2026-08-10** |
 | 🏁 **Portfolio Start Date** | **2026-08-10** |
 
@@ -29,8 +29,8 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 | **3MINDIA** | diversified | 1.0000 | ₹35,900.00 | ₹35,900.00 | ₹35,900.00 | +0.00% | 24.0% |
 | **POLYCAB** | power_and_utilities | 3.0000 | ₹9,275.00 | ₹9,275.00 | ₹27,825.00 | +0.00% | 18.6% |
 | **MCX** | financial_infrastructure | 10.0000 | ₹2,759.30 | ₹2,759.30 | ₹27,593.00 | +0.00% | 18.4% |
-| **GESHIP** | logistics | 22.0000 | ₹1,329.60 | ₹1,329.60 | ₹29,251.20 | +0.00% | 19.5% |
-| **HBLENGINE** | automobiles | 42.0000 | ₹694.55 | ₹694.55 | ₹29,171.10 | +0.00% | 19.5% |
+| **GESHIP** | logistics | 21.0000 | ₹1,329.60 | ₹1,329.60 | ₹27,921.60 | +0.00% | 18.6% |
+| **HBLENGINE** | automobiles | 43.0000 | ₹694.55 | ₹694.55 | ₹29,865.65 | +0.00% | 19.9% |
 
 ---
 
@@ -38,6 +38,8 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Date | Ticker | Action | Shares | Price | Commission (10 bps) | Cash Impact |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| 2026-08-10 | **HBLENGINE** | `BUY` | 1.0000 | ₹694.55 | ₹0.69 | ₹-695.24 |
+| 2026-08-10 | **GESHIP** | `SELL` | 1.0000 | ₹1,329.60 | ₹1.33 | +₹1,328.27 |
 | 2026-08-10 | **HBLENGINE** | `BUY` | 42.0000 | ₹694.55 | ₹29.17 | ₹-29,200.27 |
 | 2026-08-10 | **GESHIP** | `BUY` | 22.0000 | ₹1,329.60 | ₹29.25 | ₹-29,280.45 |
 | 2026-08-10 | **MCX** | `BUY` | 10.0000 | ₹2,759.30 | ₹27.59 | ₹-27,620.59 |

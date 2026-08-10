@@ -365,6 +365,10 @@ def generate_readme_dashboard(portfolio, latest_date, df_rank):
                 f"| {r['Date']} | **{r['Ticker']}** | `{r['Action']}` | {r['Shares']:.4f} | ₹{r['Price']:,.2f} | ₹{r['Commission']:.2f} | {impact_sign}₹{r['Cash_Impact']:,.2f} |"
             )
             
+    # Format markdown tables outside f-string to prevent backslash syntax errors in Python < 3.12
+    holdings_table_str = "\n".join(holdings_rows) if len(holdings_rows) > 0 else "| No active holdings. Currently 100% in cash. | | | | | | | |"
+    trades_table_str = "\n".join(trades_rows) if len(trades_rows) > 0 else "| No transactions logged yet. | | | | | | |"
+
     # Build the full readme content
     readme_content = f"""# COEP Quantitative Finance Club HMM Sector Trading System
 
@@ -394,7 +398,7 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Stock Symbol | Sector | Shares | Avg Cost Price | Current Close | Market Value | ROI (%) | Allocation (%) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-{"\n".join(holdings_rows) if len(holdings_rows) > 0 else "| No active holdings. Currently 100% in cash. | | | | | | | |"}
+{holdings_table_str}
 
 ---
 
@@ -402,7 +406,7 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Date | Ticker | Action | Shares | Price | Commission (10 bps) | Cash Impact |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-{"\n".join(trades_rows) if len(trades_rows) > 0 else "| No transactions logged yet. | | | | | | |"}
+{trades_table_str}
 
 ---
 
