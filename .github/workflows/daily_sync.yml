@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write # Grants permissions to push commits back to the repo
+  issues: write   # Grants permissions to create issues
 
 jobs:
   sync-data:
@@ -31,6 +32,13 @@ jobs:
       - name: Run Market Sync and HMM Prediction
         run: |
           python scratch/sync_live_and_get_signals.py
+
+      - name: Create GitHub Issue on Signal Change
+        if: env.SIGNAL_CHANGE == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create --title "ACTION REQUIRED: HMM Portfolio Rebalance - $(date +'%Y-%m-%d')" --body-file scratch/daily_signals.md
 
       - name: Commit and Push Updated Market Data
         run: |
