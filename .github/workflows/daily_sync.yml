@@ -4,6 +4,8 @@ on:
   schedule:
     # Trigger at 11:30 AM UTC (5:00 PM IST) Monday through Friday
     - cron: '30 11 * * 1-5'
+  push:
+    branches: [ master ]
   workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
 
 permissions:
