@@ -6,13 +6,14 @@ import pandas as pd
 from datetime import datetime
 
 # Path Configuration
-WORKSPACE_DIR = "c:/Users/Ved Bajaj/Desktop/Lifox/QF Club/HHM"
+WORKSPACE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 INDICES_DIR = os.path.join(WORKSPACE_DIR, "Indices/Daily")
 GLOBAL_RANKING_PATH = os.path.join(WORKSPACE_DIR, "scored_csv/global_ranking.csv")
 STOCKS_DIR = os.path.join(WORKSPACE_DIR, "Stocks/Daily")
 PORTFOLIO_STATE_PATH = os.path.join(WORKSPACE_DIR, "scratch/paper_portfolio_state.json")
 TRADE_LOG_PATH = os.path.join(WORKSPACE_DIR, "scratch/paper_trade_log.csv")
 README_PATH = os.path.join(WORKSPACE_DIR, "README.md")
+DAILY_SIGNALS_PATH = os.path.join(WORKSPACE_DIR, "scratch/daily_signals.md")
 
 sys.path.append(WORKSPACE_DIR)
 from live_paper_trading import evaluate_hmm_regime
@@ -154,7 +155,21 @@ def sync_portfolio_and_readme():
                 break
                 
     # Compare target signals
-    signal_changed = (set(target_symbols_curr) != set(target_symbols_prev))
+    sectors_prev_set = set(active_sectors_prev)
+    sectors_curr_set = set(active_sectors_curr)
+    stocks_prev_set = set(target_symbols_prev)
+    stocks_curr_set = set(target_symbols_curr)
+    signal_changed = sectors_curr_set != sectors_prev_set or stocks_curr_set != stocks_prev_set
+    write_signal_outputs(
+        signal_changed=signal_changed,
+        latest_date=latest_date,
+        active_sectors_curr=active_sectors_curr,
+        new_sectors=sectors_curr_set - sectors_prev_set,
+        dropped_sectors=sectors_prev_set - sectors_curr_set,
+        new_stocks=stocks_curr_set - stocks_prev_set,
+        dropped_stocks=stocks_prev_set - stocks_curr_set,
+        held_stocks=stocks_curr_set.intersection(stocks_prev_set),
+    )
     
     # 5. Calculate holdings value using today's Close prices
     today_prices = {}
@@ -434,6 +449,48 @@ python scratch/sync_portfolio_and_readme.py
         f.write(readme_content)
         
     print(f"Generated updated README.md at {README_PATH}")
+
+def write_signal_outputs(signal_changed, latest_date, active_sectors_curr, new_sectors, dropped_sectors, new_stocks, dropped_stocks, held_stocks):
+    github_env_file = os.environ.get('GITHUB_ENV')
+    if github_env_file:
+        with open(github_env_file, 'a', encoding='utf-8') as f:
+            f.write(f"SIGNAL_CHANGE={'true' if signal_changed else 'false'}\n")
+
+    if not signal_changed:
+        print("No rebalance alert required. Target sectors and holdings are unchanged.")
+        return
+
+    dropped_str = "\n".join([f"* **{s}**" for s in sorted(dropped_stocks)]) if dropped_stocks else "* No exits today."
+    new_str = "\n".join([f"* **{s}**" for s in sorted(new_stocks)]) if new_stocks else "* No new buys today."
+    held_str = "\n".join([f"* **{s}**" for s in sorted(held_stocks)]) if held_stocks else "* None."
+
+    md_content = f"""# HMM Portfolio Rebalance Alert - {latest_date}
+
+The HMM regime-switching model has detected a change in active sectors or stock rankings today. Please execute the following rebalancing trades.
+
+## Macro Sector Regimes
+* **Bullish Sectors Today**: {", ".join(active_sectors_curr) if active_sectors_curr else "None"}
+* **Sector Additions**: {", ".join(sorted(new_sectors)) if new_sectors else "None"}
+* **Sector Exits**: {", ".join(sorted(dropped_sectors)) if dropped_sectors else "None"}
+
+## Portfolio Action Plan
+
+### SELL (Exits)
+Please sell all shares of the following stocks whose sectors turned bearish or whose ranks dropped:
+{dropped_str}
+
+### BUY (New Positions)
+Please buy equal-weighted positions in the following stocks:
+{new_str}
+
+### HOLD (No Action)
+Continue holding these positions as-is:
+{held_str}
+"""
+    with open(DAILY_SIGNALS_PATH, 'w', encoding='utf-8') as f:
+        f.write(md_content)
+
+    print(f"Generated rebalance alert at {DAILY_SIGNALS_PATH}")
 
 if __name__ == '__main__':
     sync_portfolio_and_readme()

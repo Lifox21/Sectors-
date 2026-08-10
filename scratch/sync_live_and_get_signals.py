@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 
 # Path Configuration
-WORKSPACE_DIR = "c:/Users/Ved Bajaj/Desktop/Lifox/QF Club/HHM"
+WORKSPACE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 INDICES_DIR = os.path.join(WORKSPACE_DIR, "Indices/Daily")
 GLOBAL_RANKING_PATH = os.path.join(WORKSPACE_DIR, "scored_csv/global_ranking.csv")
 STOCKS_DIR = os.path.join(WORKSPACE_DIR, "Stocks/Daily")
