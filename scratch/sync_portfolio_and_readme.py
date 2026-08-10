@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # Path Configuration
 WORKSPACE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -183,13 +184,14 @@ def sync_portfolio_and_readme():
     
     print(f"Date: {latest_date} | Pre-rebalance NAV: INR {pre_rebalance_nav:,.2f}")
     
-    # 6. Execute Rebalance Trades (if signal changed OR portfolio holds no positions)
+    # 6. Execute Rebalance Trades only in the market-open execution window.
     trades_executed = []
     commission_coef = 10 / 10000.0  # 10 bps
     
     is_initial_run = (len(portfolio["holdings"]) == 0)
+    execute_trades_now = is_market_open_execution_window()
     
-    if signal_changed or is_initial_run:
+    if (signal_changed or is_initial_run) and execute_trades_now:
         print(f"Signal change detected (or initial portfolio reset). Executing rebalancing trades on {latest_date}...")
         
         # Load trade log file to append
@@ -315,6 +317,8 @@ def sync_portfolio_and_readme():
                         
         # Save updated trade logs
         pd.DataFrame(trade_rows).to_csv(TRADE_LOG_PATH, index=False)
+    elif signal_changed or is_initial_run:
+        print("Trade execution skipped. Trades are only recorded during the 9:30 AM IST execution window.")
         
     # 7. Update current prices of holdings in state for today's close
     for sym, data in portfolio["holdings"].items():
@@ -449,6 +453,17 @@ python scratch/sync_portfolio_and_readme.py
         f.write(readme_content)
         
     print(f"Generated updated README.md at {README_PATH}")
+
+def is_market_open_execution_window():
+    if os.environ.get("FORCE_TRADE_EXECUTION") == "true":
+        return True
+
+    now_ist = datetime.now(ZoneInfo("Asia/Kolkata"))
+    start_minutes = 9 * 60 + 20
+    end_minutes = 10 * 60
+    current_minutes = now_ist.hour * 60 + now_ist.minute
+    is_weekday = now_ist.weekday() < 5
+    return is_weekday and start_minutes <= current_minutes <= end_minutes
 
 def write_signal_outputs(signal_changed, latest_date, active_sectors_curr, new_sectors, dropped_sectors, new_stocks, dropped_stocks, held_stocks):
     github_env_file = os.environ.get('GITHUB_ENV')

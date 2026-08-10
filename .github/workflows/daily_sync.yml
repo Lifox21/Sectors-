@@ -2,10 +2,8 @@ name: Daily Market Data & HMM Sync
 
 on:
   schedule:
-    # Trigger at 11:30 AM UTC (5:00 PM IST) Monday through Friday.
-    - cron: '30 11 * * 1-5'
-  push:
-    branches: [ master ]
+    # Trigger at 04:00 AM UTC (9:30 AM IST) Monday through Friday.
+    - cron: '0 4 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -45,7 +43,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue create --title "ACTION REQUIRED: HMM Portfolio Rebalance - $(date +'%Y-%m-%d')" --body-file scratch/daily_signals.md
+          title="ACTION REQUIRED: HMM Portfolio Rebalance - $(TZ='Asia/Kolkata' date +'%Y-%m-%d')"
+          if gh issue list --state open --search "$title in:title" --json title --jq '.[].title' | grep -Fx "$title"; then
+            echo "Issue already exists for today's rebalance signal."
+          else
+            gh issue create --title "$title" --body-file scratch/daily_signals.md
+          fi
 
       - name: Commit and Push Updates
         run: |

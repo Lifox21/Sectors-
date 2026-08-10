@@ -1,41 +1,11 @@
 {
-  "cash": 248.21044531250664,
-  "holdings": {
-    "3MINDIA": {
-      "shares": 1.0,
-      "buy_price": 35900.0,
-      "current_price": 35900.0
-    },
-    "MCX": {
-      "shares": 10.0,
-      "buy_price": 2759.300048828125,
-      "current_price": 2759.300048828125
-    },
-    "GESHIP": {
-      "shares": 21.0,
-      "buy_price": 1329.5999755859375,
-      "current_price": 1329.5999755859375
-    },
-    "HBLENGINE": {
-      "shares": 41.0,
-      "buy_price": 694.5499877929688,
-      "current_price": 694.5499877929688
-    },
-    "GIPCL": {
-      "shares": 180.0,
-      "buy_price": 164.72999572753906,
-      "current_price": 164.72999572753906
-    }
-  },
+  "cash": 150000.0,
+  "holdings": {},
   "last_updated_date": "2026-08-10",
   "nav_history": [
     {
-      "date": "2026-08-06",
-      "nav": 150000.0
-    },
-    {
       "date": "2026-08-10",
-      "nav": 149790.75915136718
+      "nav": 150000.0
     }
   ]
 }
