@@ -213,93 +213,90 @@ def sync_portfolio_and_readme():
         current_holdings_val = sum(data["shares"] * today_prices.get(sym, data["current_price"]) for sym, data in portfolio["holdings"].items())
         total_nav = portfolio["cash"] + current_holdings_val
         
-        # Allocation per stock (each target gets 1/5 of total NAV)
-        target_allocation = total_nav / 5.0
+        # Sort target symbols by price descending
+        target_symbols_curr = sorted(target_symbols_curr, key=lambda s: today_prices.get(s, 0.0), reverse=True)
         
-        # Step 6b: BUY entries / REBALANCE existing
+        # Calculate target allocations sequentially to handle high-price stocks
+        remaining_nav = total_nav
+        num_remaining_stocks = 5
+        target_shares = {}
+        
         for sym in target_symbols_curr:
             price = today_prices[sym]
-            curr_shares = portfolio["holdings"].get(sym, {}).get("shares", 0.0)
-            curr_val = curr_shares * price
-            deviation = target_allocation - curr_val
+            target_alloc = remaining_nav / num_remaining_stocks
             
-            if sym not in portfolio["holdings"]:
-                # Pure Buy
-                shares_to_buy = int(deviation / (price * (1.0 + commission_coef)))
-                if shares_to_buy > 0:
-                    net_cost = shares_to_buy * price
-                    comm = net_cost * commission_coef
-                    total_cost = net_cost + comm
-                    
-                    portfolio["cash"] -= total_cost
+            # Calculate integer shares within target allocation
+            qty = int(target_alloc / (price * (1.0 + commission_coef)))
+            
+            # If price <= 40k and target_alloc < price, buy exactly 1 share if we have cash
+            if qty == 0 and price <= 40000.0 and remaining_nav >= price * (1.0 + commission_coef):
+                qty = 1
+                
+            target_shares[sym] = qty
+            cost = qty * price * (1.0 + commission_coef)
+            remaining_nav -= cost
+            num_remaining_stocks -= 1
+            
+        # Execute rebalance trades based on target_shares
+        for sym in target_symbols_curr:
+            price = today_prices[sym]
+            target_qty = target_shares.get(sym, 0)
+            curr_qty = int(portfolio["holdings"].get(sym, {}).get("shares", 0.0))
+            
+            diff_qty = target_qty - curr_qty
+            
+            if diff_qty > 0:  # BUY
+                net_cost = diff_qty * price
+                comm = net_cost * commission_coef
+                total_cost = net_cost + comm
+                
+                portfolio["cash"] -= total_cost
+                if sym not in portfolio["holdings"]:
                     portfolio["holdings"][sym] = {
-                        'shares': shares_to_buy,
+                        'shares': float(diff_qty),
                         'buy_price': price,
                         'current_price': price
                     }
+                else:
+                    portfolio["holdings"][sym]['shares'] = float(target_qty)
+                    portfolio["holdings"][sym]['current_price'] = price
                     
-                    trade_record = {
-                        'Date': latest_date,
-                        'Ticker': sym,
-                        'Action': 'BUY',
-                        'Shares': float(shares_to_buy),
-                        'Price': price,
-                        'Commission': comm,
-                        'Cash_Impact': -total_cost
-                    }
-                    trade_rows.append(trade_record)
-                    trades_executed.append(trade_record)
-            else:
-                # Rebalance check (if deviation > 5% allocation threshold)
-                if abs(deviation) > target_allocation * 0.05:
-                    if deviation > 0:  # Buy to add
-                        shares_to_buy = int(deviation / (price * (1.0 + commission_coef)))
-                        if shares_to_buy > 0:
-                            net_cost = shares_to_buy * price
-                            comm = net_cost * commission_coef
-                            total_cost = net_cost + comm
-                            
-                            portfolio["cash"] -= total_cost
-                            portfolio["holdings"][sym]['shares'] += shares_to_buy
-                            portfolio["holdings"][sym]['current_price'] = price
-                            
-                            trade_record = {
-                                'Date': latest_date,
-                                'Ticker': sym,
-                                'Action': 'BUY_REBAL',
-                                'Shares': float(shares_to_buy),
-                                'Price': price,
-                                'Commission': comm,
-                                'Cash_Impact': -total_cost
-                            }
-                            trade_rows.append(trade_record)
-                            trades_executed.append(trade_record)
-                    else:  # Sell to trim
-                        shares_to_sell = int(abs(deviation) / price)
-                        if shares_to_sell > 0:
-                            shares_to_sell = min(shares_to_sell, int(portfolio["holdings"][sym]['shares']))
-                            net_val = shares_to_sell * price
-                            comm = net_val * commission_coef
-                            net_cash = net_val - comm
-                            
-                            portfolio["cash"] += net_cash
-                            portfolio["holdings"][sym]['shares'] -= shares_to_sell
-                            portfolio["holdings"][sym]['current_price'] = price
-                            
-                            if portfolio["holdings"][sym]['shares'] <= 0:
-                                del portfolio["holdings"][sym]
-                                
-                            trade_record = {
-                                'Date': latest_date,
-                                'Ticker': sym,
-                                'Action': 'SELL_REBAL',
-                                'Shares': float(shares_to_sell),
-                                'Price': price,
-                                'Commission': comm,
-                                'Cash_Impact': net_cash
-                            }
-                            trade_rows.append(trade_record)
-                            trades_executed.append(trade_record)
+                trade_record = {
+                    'Date': latest_date,
+                    'Ticker': sym,
+                    'Action': 'BUY',
+                    'Shares': float(diff_qty),
+                    'Price': price,
+                    'Commission': comm,
+                    'Cash_Impact': -total_cost
+                }
+                trade_rows.append(trade_record)
+                trades_executed.append(trade_record)
+                
+            elif diff_qty < 0:  # SELL (Trim or Exit)
+                sell_qty = abs(diff_qty)
+                net_val = sell_qty * price
+                comm = net_val * commission_coef
+                net_cash = net_val - comm
+                
+                portfolio["cash"] += net_cash
+                portfolio["holdings"][sym]['shares'] = float(target_qty)
+                portfolio["holdings"][sym]['current_price'] = price
+                
+                if portfolio["holdings"][sym]['shares'] <= 0:
+                    del portfolio["holdings"][sym]
+                    
+                trade_record = {
+                    'Date': latest_date,
+                    'Ticker': sym,
+                    'Action': 'SELL',
+                    'Shares': float(sell_qty),
+                    'Price': price,
+                    'Commission': comm,
+                    'Cash_Impact': net_cash
+                }
+                trade_rows.append(trade_record)
+                trades_executed.append(trade_record)
                         
         # Save updated trade logs
         pd.DataFrame(trade_rows).to_csv(TRADE_LOG_PATH, index=False)
@@ -336,7 +333,7 @@ def sync_portfolio_and_readme():
     generate_readme_dashboard(portfolio, latest_date, df_rank)
 
 def generate_readme_dashboard(portfolio, latest_date, df_rank):
-    starting_nav = 100000.0
+    starting_nav = 150000.0
     current_nav = portfolio["cash"] + sum(d["shares"] * d["current_price"] for s, d in portfolio["holdings"].items())
     total_roi = ((current_nav - starting_nav) / starting_nav) * 100.0
     
@@ -378,7 +375,7 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 ## 📈 Live Paper Portfolio Dashboard
 
 > [!NOTE]
-> This paper portfolio was initialized on **August 10, 2026** with a starting capital of **₹100,000.00**.
+> This paper portfolio was initialized on **August 10, 2026** with a starting capital of **₹150,000.00**.
 > The metrics below are automatically updated at daily market close.
 
 ### 📊 Portfolio Summary
