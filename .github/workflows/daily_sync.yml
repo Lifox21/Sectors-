@@ -29,9 +29,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy pandas hmmlearn yfinance
 
-      - name: Run Market Sync and HMM Prediction
+      - name: Run Market Sync, Portfolio Rebalance, and README Update
         run: |
-          python scratch/sync_live_and_get_signals.py
+          python scratch/sync_portfolio_and_readme.py
 
       - name: Create GitHub Issue on Signal Change
         if: env.SIGNAL_CHANGE == 'true'
@@ -40,10 +40,10 @@ jobs:
         run: |
           gh issue create --title "ACTION REQUIRED: HMM Portfolio Rebalance - $(date +'%Y-%m-%d')" --body-file scratch/daily_signals.md
 
-      - name: Commit and Push Updated Market Data
+      - name: Commit and Push Updates
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add Indices/Daily/*.csv scratch/stock_portfolio_backtest_results.csv
+          git add Indices/Daily/*.csv scratch/paper_portfolio_state.json scratch/paper_trade_log.csv README.md
           # Check if there are changes to commit, otherwise do nothing
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update market data and HMM regimes [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update portfolio metrics, README dashboard, and HMM regimes [skip ci]" && git push)
