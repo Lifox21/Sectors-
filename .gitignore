@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large data assets
+quant_club_sector_terminal.html
+regime_analysis_data.json
+Data_Enhanced.csv
+
+# Temporary simulation databases and outputs
+scratch/paper_portfolio_state.json
+scratch/paper_trade_log.csv
+scratch/daily_run_log.txt
+summary_temp.csv
+
+# Media & Documentation formats
+*.pdf
+*.jpeg
+*.png
+*.jpg
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini

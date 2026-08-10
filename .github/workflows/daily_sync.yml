@@ -1,0 +1,41 @@
+name: Daily Market Data & HMM Sync
+
+on:
+  schedule:
+    # Trigger at 11:30 AM UTC (5:00 PM IST) Monday through Friday
+    - cron: '30 11 * * 1-5'
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+
+permissions:
+  contents: write # Grants permissions to push commits back to the repo
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip' # cache pip dependencies for faster runs
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas hmmlearn yfinance
+
+      - name: Run Market Sync and HMM Prediction
+        run: |
+          python scratch/sync_live_and_get_signals.py
+
+      - name: Commit and Push Updated Market Data
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add Indices/Daily/*.csv scratch/stock_portfolio_backtest_results.csv
+          # Check if there are changes to commit, otherwise do nothing
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update market data and HMM regimes [skip ci]" && git push)
