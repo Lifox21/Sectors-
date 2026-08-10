@@ -9,8 +9,6 @@ regime_analysis_data.json
 Data_Enhanced.csv
 
 # Temporary simulation databases and outputs
-scratch/paper_portfolio_state.json
-scratch/paper_trade_log.csv
 scratch/daily_run_log.txt
 summary_temp.csv
 
