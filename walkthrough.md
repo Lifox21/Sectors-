@@ -26,7 +26,7 @@ We have built two automated sync engines to ensure your database is updated dail
 ### A. GitHub Actions Remote Sync Workflow
 We created a GitHub Action configuration file:
 * **File path**: [`.github/workflows/daily_sync.yml`](file:///c:/Users/Ved%20Bajaj/Desktop/Lifox/QF%20Club/HHM/.github/workflows/daily_sync.yml)
-* **Trigger Schedule**: Mon-Fri at **11:30 AM UTC (5:00 PM IST)**. Can also be triggered manually using the "Run workflow" button in your GitHub repository's Actions tab.
+* **Trigger Schedule**: Mon-Fri at **1:30 PM UTC (7:00 PM IST)**. Can also be triggered manually using the "Run workflow" button in your GitHub repository's Actions tab.
 * **Function**: 
   1. Installs dependencies (`pandas`, `numpy`, `hmmlearn`, `yfinance`).
   2. Runs `python scratch/sync_live_and_get_signals.py` to sync today's closes and check if there are signal changes (sectors or top 5 stocks) compared to yesterday.

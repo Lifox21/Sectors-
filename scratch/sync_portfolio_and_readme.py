@@ -36,9 +36,14 @@ def sync_portfolio_and_readme():
         
     yf_symbols = [f"{sym}.NS" for sym in symbols]
     
-    print("Downloading closing prices from Yahoo Finance...")
+    from datetime import timedelta
+    today_ist = datetime.now(ZoneInfo("Asia/Kolkata"))
+    start_date_str = (today_ist - timedelta(days=15)).strftime('%Y-%m-%d')
+    end_date_str = (today_ist + timedelta(days=1)).strftime('%Y-%m-%d')
+    
+    print(f"Downloading closing prices from Yahoo Finance ({start_date_str} to {end_date_str})...")
     try:
-        df_live = yf.download(yf_symbols, start="2026-08-05", end="2026-08-11", group_by='ticker')
+        df_live = yf.download(yf_symbols, start=start_date_str, end=end_date_str, group_by='ticker')
     except Exception as e:
         print(f"Error downloading data: {e}")
         return
