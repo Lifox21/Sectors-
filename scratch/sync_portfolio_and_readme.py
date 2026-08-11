@@ -457,6 +457,8 @@ python scratch/sync_portfolio_and_readme.py
 def is_market_open_execution_window():
     if os.environ.get("FORCE_TRADE_EXECUTION") == "true":
         return True
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        return True
 
     now_ist = datetime.now(ZoneInfo("Asia/Kolkata"))
     start_minutes = 9 * 60 + 20
