@@ -1,37 +1,41 @@
 {
-  "cash": 109.9602620849655,
+  "cash": 113.01781213379581,
   "holdings": {
-    "3MINDIA": {
-      "shares": 1.0,
-      "buy_price": 35900.0,
-      "current_price": 35900.0
-    },
     "POLYCAB": {
       "shares": 3.0,
       "buy_price": 9275.0,
-      "current_price": 9275.0
+      "current_price": 9289.0
     },
     "MCX": {
       "shares": 10.0,
       "buy_price": 2759.300048828125,
-      "current_price": 2759.300048828125
-    },
-    "GESHIP": {
-      "shares": 22.0,
-      "buy_price": 1329.5999755859375,
-      "current_price": 1329.5999755859375
+      "current_price": 2970.10009765625
     },
     "HBLENGINE": {
-      "shares": 42.0,
+      "shares": 48.0,
       "buy_price": 694.5499877929688,
-      "current_price": 694.5499877929688
+      "current_price": 691.5
+    },
+    "GVT&D": {
+      "shares": 6.0,
+      "buy_price": 4406.5,
+      "current_price": 4406.5
+    },
+    "GIPCL": {
+      "shares": 192.0,
+      "buy_price": 174.0500030517578,
+      "current_price": 174.0500030517578
     }
   },
-  "last_updated_date": "2026-08-10",
+  "last_updated_date": "2026-08-12",
   "nav_history": [
     {
       "date": "2026-08-10",
       "nav": 149850.25970056152
+    },
+    {
+      "date": "2026-08-12",
+      "nav": 150729.6193746338
     }
   ]
 }

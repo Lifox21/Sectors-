@@ -14,10 +14,10 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Metric | Value |
 | :--- | :--- |
-| 💰 **Total Net Asset Value (NAV)** | **₹149,850.26** |
-| 🏦 **Cash Balance** | **₹109.96** |
-| 📊 **Total Return (ROI)** | **-0.0998%** |
-| 📅 **Last Synchronization** | **2026-08-10** |
+| 💰 **Total Net Asset Value (NAV)** | **₹150,729.62** |
+| 🏦 **Cash Balance** | **₹113.02** |
+| 📊 **Total Return (ROI)** | **+0.4864%** |
+| 📅 **Last Synchronization** | **2026-08-12** |
 | 🏁 **Portfolio Start Date** | **2026-08-10** |
 
 ---
@@ -26,11 +26,11 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Stock Symbol | Sector | Shares | Avg Cost Price | Current Close | Market Value | ROI (%) | Allocation (%) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **3MINDIA** | diversified | 1.0000 | ₹35,900.00 | ₹35,900.00 | ₹35,900.00 | +0.00% | 24.0% |
-| **POLYCAB** | power_and_utilities | 3.0000 | ₹9,275.00 | ₹9,275.00 | ₹27,825.00 | +0.00% | 18.6% |
-| **MCX** | financial_infrastructure | 10.0000 | ₹2,759.30 | ₹2,759.30 | ₹27,593.00 | +0.00% | 18.4% |
-| **GESHIP** | logistics | 22.0000 | ₹1,329.60 | ₹1,329.60 | ₹29,251.20 | +0.00% | 19.5% |
-| **HBLENGINE** | automobiles | 42.0000 | ₹694.55 | ₹694.55 | ₹29,171.10 | +0.00% | 19.5% |
+| **POLYCAB** | power_and_utilities | 3.0000 | ₹9,275.00 | ₹9,289.00 | ₹27,867.00 | +0.15% | 18.5% |
+| **MCX** | financial_infrastructure | 10.0000 | ₹2,759.30 | ₹2,970.10 | ₹29,701.00 | +7.64% | 19.7% |
+| **HBLENGINE** | automobiles | 48.0000 | ₹694.55 | ₹691.50 | ₹33,192.00 | -0.44% | 22.0% |
+| **GVT&D** | miscellaneous | 6.0000 | ₹4,406.50 | ₹4,406.50 | ₹26,439.00 | +0.00% | 17.5% |
+| **GIPCL** | power_and_utilities | 192.0000 | ₹174.05 | ₹174.05 | ₹33,417.60 | +0.00% | 22.2% |
 
 ---
 
@@ -38,6 +38,11 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Date | Ticker | Action | Shares | Price | Commission (10 bps) | Cash Impact |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| 2026-08-12 | **GIPCL** | `BUY` | 192.0000 | ₹174.05 | ₹33.42 | ₹-33,451.02 |
+| 2026-08-12 | **HBLENGINE** | `BUY` | 6.0000 | ₹691.50 | ₹4.15 | ₹-4,153.15 |
+| 2026-08-12 | **GVT&D** | `BUY` | 6.0000 | ₹4,406.50 | ₹26.44 | ₹-26,465.44 |
+| 2026-08-12 | **GESHIP** | `SELL` | 22.0000 | ₹1,281.90 | ₹28.20 | +₹28,173.60 |
+| 2026-08-12 | **3MINDIA** | `SELL` | 1.0000 | ₹35,935.00 | ₹35.94 | +₹35,899.07 |
 | 2026-08-10 | **HBLENGINE** | `BUY` | 42.0000 | ₹694.55 | ₹29.17 | ₹-29,200.27 |
 | 2026-08-10 | **GESHIP** | `BUY` | 22.0000 | ₹1,329.60 | ₹29.25 | ₹-29,280.45 |
 | 2026-08-10 | **MCX** | `BUY` | 10.0000 | ₹2,759.30 | ₹27.59 | ₹-27,620.59 |
