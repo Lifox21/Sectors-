@@ -1,33 +1,33 @@
 {
-  "cash": 356.26874230958856,
+  "cash": 118.7664848327804,
   "holdings": {
     "HBLENGINE": {
-      "shares": 42.0,
+      "shares": 44.0,
       "buy_price": 694.5499877929688,
-      "current_price": 693.0499877929688
-    },
-    "3MINDIA": {
-      "shares": 1.0,
-      "buy_price": 36165.0,
-      "current_price": 36165.0
+      "current_price": 678.5
     },
     "DIXON": {
       "shares": 2.0,
       "buy_price": 14035.0,
-      "current_price": 14035.0
-    },
-    "BHARTIARTL": {
-      "shares": 14.0,
-      "buy_price": 1939.0999755859375,
-      "current_price": 1939.0999755859375
+      "current_price": 14130.0
     },
     "HINDZINC": {
-      "shares": 51.0,
+      "shares": 53.0,
       "buy_price": 578.3499755859375,
-      "current_price": 578.3499755859375
+      "current_price": 561.9000244140625
+    },
+    "SARDAEN": {
+      "shares": 57.0,
+      "buy_price": 531.1500244140625,
+      "current_price": 531.1500244140625
+    },
+    "GIPCL": {
+      "shares": 174.0,
+      "buy_price": 175.77000427246094,
+      "current_price": 175.77000427246094
     }
   },
-  "last_updated_date": "2026-08-13",
+  "last_updated_date": "2026-08-14",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -40,6 +40,10 @@
     {
       "date": "2026-08-13",
       "nav": 150342.61664270022
+    },
+    {
+      "date": "2026-08-14",
+      "nav": 148872.99991378785
     }
   ]
 }
