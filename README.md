@@ -14,10 +14,10 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Metric | Value |
 | :--- | :--- |
-| 💰 **Total Net Asset Value (NAV)** | **₹148,873.00** |
-| 🏦 **Cash Balance** | **₹118.77** |
-| 📊 **Total Return (ROI)** | **-0.7513%** |
-| 📅 **Last Synchronization** | **2026-08-14** |
+| 💰 **Total Net Asset Value (NAV)** | **₹150,040.24** |
+| 🏦 **Cash Balance** | **₹638.14** |
+| 📊 **Total Return (ROI)** | **+0.0268%** |
+| 📅 **Last Synchronization** | **2026-08-20** |
 | 🏁 **Portfolio Start Date** | **2026-08-10** |
 
 ---
@@ -26,11 +26,11 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Stock Symbol | Sector | Shares | Avg Cost Price | Current Close | Market Value | ROI (%) | Allocation (%) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **HBLENGINE** | automobiles | 44.0000 | ₹694.55 | ₹678.50 | ₹29,854.00 | -2.31% | 20.1% |
-| **DIXON** | electronics_ems | 2.0000 | ₹14,035.00 | ₹14,130.00 | ₹28,260.00 | +0.68% | 19.0% |
-| **HINDZINC** | metals_and_mining | 53.0000 | ₹578.35 | ₹561.90 | ₹29,780.70 | -2.84% | 20.0% |
-| **SARDAEN** | metals_and_mining | 57.0000 | ₹531.15 | ₹531.15 | ₹30,275.55 | +0.00% | 20.3% |
-| **GIPCL** | power_and_utilities | 174.0000 | ₹175.77 | ₹175.77 | ₹30,583.98 | +0.00% | 20.5% |
+| **HBLENGINE** | automobiles | 48.0000 | ₹694.55 | ₹712.90 | ₹34,219.20 | +2.64% | 22.8% |
+| **DIXON** | electronics_ems | 1.0000 | ₹14,035.00 | ₹14,850.00 | ₹14,850.00 | +5.81% | 9.9% |
+| **3MINDIA** | diversified | 1.0000 | ₹33,550.00 | ₹33,550.00 | ₹33,550.00 | +0.00% | 22.4% |
+| **BHARTIARTL** | telecommunications | 17.0000 | ₹1,941.70 | ₹1,941.70 | ₹33,008.90 | +0.00% | 22.0% |
+| **GESHIP** | logistics | 26.0000 | ₹1,299.00 | ₹1,299.00 | ₹33,774.00 | +0.00% | 22.5% |
 
 ---
 
@@ -38,16 +38,16 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Date | Ticker | Action | Shares | Price | Commission (10 bps) | Cash Impact |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| 2026-08-20 | **HBLENGINE** | `BUY` | 4.0000 | ₹712.90 | ₹2.85 | ₹-2,854.45 |
+| 2026-08-20 | **GESHIP** | `BUY` | 26.0000 | ₹1,299.00 | ₹33.77 | ₹-33,807.77 |
+| 2026-08-20 | **BHARTIARTL** | `BUY` | 17.0000 | ₹1,941.70 | ₹33.01 | ₹-33,041.91 |
+| 2026-08-20 | **DIXON** | `SELL` | 1.0000 | ₹14,850.00 | ₹14.85 | +₹14,835.15 |
+| 2026-08-20 | **3MINDIA** | `BUY` | 1.0000 | ₹33,550.00 | ₹33.55 | ₹-33,583.55 |
+| 2026-08-20 | **GIPCL** | `SELL` | 174.0000 | ₹170.18 | ₹29.61 | +₹29,581.71 |
+| 2026-08-20 | **SARDAEN** | `SELL` | 57.0000 | ₹509.35 | ₹29.03 | +₹29,003.92 |
+| 2026-08-20 | **HINDZINC** | `SELL` | 53.0000 | ₹573.90 | ₹30.42 | +₹30,386.28 |
 | 2026-08-14 | **GIPCL** | `BUY` | 174.0000 | ₹175.77 | ₹30.58 | ₹-30,614.56 |
 | 2026-08-14 | **SARDAEN** | `BUY` | 57.0000 | ₹531.15 | ₹30.28 | ₹-30,305.83 |
-| 2026-08-14 | **HINDZINC** | `BUY` | 2.0000 | ₹561.90 | ₹1.12 | ₹-1,124.92 |
-| 2026-08-14 | **HBLENGINE** | `BUY` | 2.0000 | ₹678.50 | ₹1.36 | ₹-1,358.36 |
-| 2026-08-14 | **BHARTIARTL** | `SELL` | 14.0000 | ₹1,992.10 | ₹27.89 | +₹27,861.51 |
-| 2026-08-14 | **3MINDIA** | `SELL` | 1.0000 | ₹35,340.00 | ₹35.34 | +₹35,304.66 |
-| 2026-08-13 | **HINDZINC** | `BUY` | 51.0000 | ₹578.35 | ₹29.50 | ₹-29,525.34 |
-| 2026-08-13 | **HBLENGINE** | `SELL` | 6.0000 | ₹693.05 | ₹4.16 | +₹4,154.14 |
-| 2026-08-13 | **BHARTIARTL** | `BUY` | 14.0000 | ₹1,939.10 | ₹27.15 | ₹-27,174.55 |
-| 2026-08-13 | **DIXON** | `BUY` | 2.0000 | ₹14,035.00 | ₹28.07 | ₹-28,098.07 |
 
 ---
 
