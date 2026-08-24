@@ -1,30 +1,30 @@
 {
-  "cash": 423.3341231689419,
+  "cash": 371.6937329101529,
   "holdings": {
     "HBLENGINE": {
-      "shares": 45.0,
+      "shares": 43.0,
       "buy_price": 694.5499877929688,
-      "current_price": 690.5
+      "current_price": 690.9000244140625
     },
     "3MINDIA": {
       "shares": 1.0,
       "buy_price": 33800.0,
-      "current_price": 33875.0
+      "current_price": 33885.0
     },
     "RADICO": {
       "shares": 6.0,
       "buy_price": 4606.89990234375,
-      "current_price": 4578.39990234375
-    },
-    "LODHA": {
-      "shares": 23.0,
-      "buy_price": 1260.4000244140625,
-      "current_price": 1257.5999755859375
+      "current_price": 4600.0
     },
     "SIKA": {
       "shares": 29.0,
       "buy_price": 1040.0,
-      "current_price": 1029.0999755859375
+      "current_price": 1036.5999755859375
+    },
+    "DLF": {
+      "shares": 44.0,
+      "buy_price": 689.0,
+      "current_price": 689.0
     }
   },
   "last_updated_date": "2026-08-24",
@@ -39,7 +39,7 @@
     },
     {
       "date": "2026-08-24",
-      "nav": 151609.9322677002
+      "nav": 151942.79407470702
     }
   ]
 }
