@@ -2,8 +2,8 @@ name: Daily Market Data & HMM Sync
 
 on:
   schedule:
-    # Trigger at 12:30 PM UTC (6:00 PM IST) Monday through Friday.
-    - cron: '30 12 * * 1-5'
+    # Trigger at 03:00 PM UTC (8:30 PM IST) Monday through Friday.
+    - cron: '00 15 * * 1-5'
   workflow_dispatch:
 
 permissions:

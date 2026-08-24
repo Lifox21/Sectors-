@@ -466,7 +466,7 @@ def is_market_open_execution_window():
         return True
 
     now_ist = datetime.now(ZoneInfo("Asia/Kolkata"))
-    start_minutes = 9 * 60 + 20
+    start_minutes = 8 * 60 + 20
     end_minutes = 10 * 60
     current_minutes = now_ist.hour * 60 + now_ist.minute
     is_weekday = now_ist.weekday() < 5
