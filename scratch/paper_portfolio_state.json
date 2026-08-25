@@ -1,33 +1,33 @@
 {
-  "cash": 371.6937329101529,
+  "cash": 499.411680847159,
   "holdings": {
-    "HBLENGINE": {
-      "shares": 43.0,
-      "buy_price": 694.5499877929688,
-      "current_price": 690.9000244140625
+    "GVT&D": {
+      "shares": 7.0,
+      "buy_price": 4185.0,
+      "current_price": 4185.0
     },
-    "3MINDIA": {
-      "shares": 1.0,
-      "buy_price": 33800.0,
-      "current_price": 33885.0
+    "BHARTIARTL": {
+      "shares": 15.0,
+      "buy_price": 1947.0,
+      "current_price": 1947.0
     },
-    "RADICO": {
-      "shares": 6.0,
-      "buy_price": 4606.89990234375,
-      "current_price": 4600.0
+    "BHARTIHEXA": {
+      "shares": 19.0,
+      "buy_price": 1592.9000244140625,
+      "current_price": 1592.9000244140625
     },
-    "SIKA": {
-      "shares": 29.0,
-      "buy_price": 1040.0,
-      "current_price": 1036.5999755859375
+    "HINDZINC": {
+      "shares": 52.0,
+      "buy_price": 592.5999755859375,
+      "current_price": 592.5999755859375
     },
-    "DLF": {
-      "shares": 44.0,
-      "buy_price": 689.0,
-      "current_price": 689.0
+    "SARDAEN": {
+      "shares": 61.0,
+      "buy_price": 506.5,
+      "current_price": 506.5
     }
   },
-  "last_updated_date": "2026-08-24",
+  "last_updated_date": "2026-08-25",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -40,6 +40,10 @@
     {
       "date": "2026-08-24",
       "nav": 151942.79407470702
+    },
+    {
+      "date": "2026-08-25",
+      "nav": 150976.2108751831
     }
   ]
 }
