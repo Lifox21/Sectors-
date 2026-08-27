@@ -1,6 +1,8 @@
 name: Daily Market Data & HMM Sync
 
 on:
+  push:
+    branches: [ master ]
   schedule:
     # Trigger at 03:00 PM UTC (8:30 PM IST) Monday through Friday.
     - cron: '00 15 * * 1-5'
