@@ -1,33 +1,33 @@
 {
-  "cash": 390.04797611999675,
+  "cash": 567.2330047454759,
   "holdings": {
-    "HBLENGINE": {
-      "shares": 51.0,
-      "buy_price": 683.9000244140625,
-      "current_price": 659.2000122070312
-    },
-    "DIXON": {
-      "shares": 1.0,
-      "buy_price": 14711.0,
-      "current_price": 14461.0
-    },
-    "3MINDIA": {
-      "shares": 1.0,
-      "buy_price": 33315.0,
-      "current_price": 33315.0
-    },
     "GESHIP": {
-      "shares": 25.0,
+      "shares": 23.0,
       "buy_price": 1325.5999755859375,
-      "current_price": 1325.5999755859375
+      "current_price": 1305.5999755859375
     },
     "HINDZINC": {
-      "shares": 57.0,
+      "shares": 54.0,
       "buy_price": 597.0,
-      "current_price": 597.0
+      "current_price": 588.4000244140625
+    },
+    "MCX": {
+      "shares": 8.0,
+      "buy_price": 3286.0,
+      "current_price": 3286.0
+    },
+    "BHARTIARTL": {
+      "shares": 16.0,
+      "buy_price": 1862.800048828125,
+      "current_price": 1862.800048828125
+    },
+    "BHARTIHEXA": {
+      "shares": 19.0,
+      "buy_price": 1531.0999755859375,
+      "current_price": 1531.0999755859375
     }
   },
-  "last_updated_date": "2026-09-01",
+  "last_updated_date": "2026-09-02",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -64,6 +64,10 @@
     {
       "date": "2026-09-01",
       "nav": 148954.24798832703
+    },
+    {
+      "date": "2026-09-02",
+      "nav": 147553.33407896422
     }
   ]
 }

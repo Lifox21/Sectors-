@@ -14,10 +14,10 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Metric | Value |
 | :--- | :--- |
-| 💰 **Total Net Asset Value (NAV)** | **₹148,954.25** |
-| 🏦 **Cash Balance** | **₹390.05** |
-| 📊 **Total Return (ROI)** | **-0.6972%** |
-| 📅 **Last Synchronization** | **2026-09-01** |
+| 💰 **Total Net Asset Value (NAV)** | **₹147,553.33** |
+| 🏦 **Cash Balance** | **₹567.23** |
+| 📊 **Total Return (ROI)** | **-1.6311%** |
+| 📅 **Last Synchronization** | **2026-09-02** |
 | 🏁 **Portfolio Start Date** | **2026-08-10** |
 
 ---
@@ -26,11 +26,11 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Stock Symbol | Sector | Shares | Avg Cost Price | Current Close | Market Value | ROI (%) | Allocation (%) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **HBLENGINE** | automobiles | 51.0000 | ₹683.90 | ₹659.20 | ₹33,619.20 | -3.61% | 22.6% |
-| **DIXON** | electronics_ems | 1.0000 | ₹14,711.00 | ₹14,461.00 | ₹14,461.00 | -1.70% | 9.7% |
-| **3MINDIA** | diversified | 1.0000 | ₹33,315.00 | ₹33,315.00 | ₹33,315.00 | +0.00% | 22.4% |
-| **GESHIP** | logistics | 25.0000 | ₹1,325.60 | ₹1,325.60 | ₹33,140.00 | +0.00% | 22.2% |
-| **HINDZINC** | metals_and_mining | 57.0000 | ₹597.00 | ₹597.00 | ₹34,029.00 | +0.00% | 22.8% |
+| **GESHIP** | logistics | 23.0000 | ₹1,325.60 | ₹1,305.60 | ₹30,028.80 | -1.51% | 20.4% |
+| **HINDZINC** | metals_and_mining | 54.0000 | ₹597.00 | ₹588.40 | ₹31,773.60 | -1.44% | 21.5% |
+| **MCX** | financial_infrastructure | 8.0000 | ₹3,286.00 | ₹3,286.00 | ₹26,288.00 | +0.00% | 17.8% |
+| **BHARTIARTL** | telecommunications | 16.0000 | ₹1,862.80 | ₹1,862.80 | ₹29,804.80 | +0.00% | 20.2% |
+| **BHARTIHEXA** | telecommunications | 19.0000 | ₹1,531.10 | ₹1,531.10 | ₹29,090.90 | +0.00% | 19.7% |
 
 ---
 
@@ -38,16 +38,16 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Date | Ticker | Action | Shares | Price | Commission (10 bps) | Cash Impact |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| 2026-09-02 | **HINDZINC** | `SELL` | 3.0000 | ₹588.40 | ₹1.77 | +₹1,763.43 |
+| 2026-09-02 | **GESHIP** | `SELL` | 2.0000 | ₹1,305.60 | ₹2.61 | +₹2,608.59 |
+| 2026-09-02 | **BHARTIHEXA** | `BUY` | 19.0000 | ₹1,531.10 | ₹29.09 | ₹-29,119.99 |
+| 2026-09-02 | **BHARTIARTL** | `BUY` | 16.0000 | ₹1,862.80 | ₹29.80 | ₹-29,834.61 |
+| 2026-09-02 | **MCX** | `BUY` | 8.0000 | ₹3,286.00 | ₹26.29 | ₹-26,314.29 |
+| 2026-09-02 | **3MINDIA** | `SELL` | 1.0000 | ₹32,895.00 | ₹32.90 | +₹32,862.11 |
+| 2026-09-02 | **DIXON** | `SELL` | 1.0000 | ₹14,590.00 | ₹14.59 | +₹14,575.41 |
+| 2026-09-02 | **HBLENGINE** | `SELL` | 51.0000 | ₹660.20 | ₹33.67 | +₹33,636.53 |
 | 2026-09-01 | **HINDZINC** | `BUY` | 57.0000 | ₹597.00 | ₹34.03 | ₹-34,063.03 |
 | 2026-09-01 | **HBLENGINE** | `BUY` | 3.0000 | ₹659.20 | ₹1.98 | ₹-1,979.58 |
-| 2026-09-01 | **GESHIP** | `BUY` | 25.0000 | ₹1,325.60 | ₹33.14 | ₹-33,173.14 |
-| 2026-09-01 | **DIXON** | `SELL` | 1.0000 | ₹14,461.00 | ₹14.46 | +₹14,446.54 |
-| 2026-09-01 | **3MINDIA** | `BUY` | 1.0000 | ₹33,315.00 | ₹33.31 | ₹-33,348.32 |
-| 2026-09-01 | **GIPCL** | `SELL` | 159.0000 | ₹198.80 | ₹31.61 | +₹31,577.59 |
-| 2026-09-01 | **POLYCAB** | `SELL` | 3.0000 | ₹8,895.50 | ₹26.69 | +₹26,659.81 |
-| 2026-09-01 | **BHARTIARTL** | `SELL` | 16.0000 | ₹1,877.20 | ₹30.04 | +₹30,005.16 |
-| 2026-08-31 | **GIPCL** | `BUY` | 159.0000 | ₹205.91 | ₹32.74 | ₹-32,772.43 |
-| 2026-08-31 | **POLYCAB** | `BUY` | 3.0000 | ₹9,088.00 | ₹27.26 | ₹-27,291.26 |
 
 ---
 
