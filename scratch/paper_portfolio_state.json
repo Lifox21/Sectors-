@@ -1,33 +1,33 @@
 {
-  "cash": 134.2493206634224,
+  "cash": 397.7046024322299,
   "holdings": {
     "3MINDIA": {
       "shares": 1.0,
       "buy_price": 32800.0,
-      "current_price": 32710.0
+      "current_price": 31590.0
     },
-    "GESHIP": {
-      "shares": 21.0,
-      "buy_price": 1400.199951171875,
-      "current_price": 1412.199951171875
+    "LODHA": {
+      "shares": 26.0,
+      "buy_price": 1064.800048828125,
+      "current_price": 1064.800048828125
     },
-    "BHARTIARTL": {
-      "shares": 15.0,
-      "buy_price": 1831.0999755859375,
-      "current_price": 1831.0999755859375
+    "HINDZINC": {
+      "shares": 50.0,
+      "buy_price": 560.9000244140625,
+      "current_price": 560.9000244140625
     },
-    "TATACOMM": {
-      "shares": 16.0,
-      "buy_price": 1761.5999755859375,
-      "current_price": 1761.5999755859375
+    "SARDAEN": {
+      "shares": 57.0,
+      "buy_price": 501.3500061035156,
+      "current_price": 501.3500061035156
     },
-    "BHARTIHEXA": {
-      "shares": 19.0,
-      "buy_price": 1545.0,
-      "current_price": 1545.0
+    "HINDCOPPER": {
+      "shares": 58.0,
+      "buy_price": 490.2400207519531,
+      "current_price": 490.2400207519531
     }
   },
-  "last_updated_date": "2026-09-15",
+  "last_updated_date": "2026-09-16",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -100,6 +100,10 @@
     {
       "date": "2026-09-15",
       "nav": 147507.54753843686
+    },
+    {
+      "date": "2026-09-16",
+      "nav": 144728.37864418028
     }
   ]
 }
