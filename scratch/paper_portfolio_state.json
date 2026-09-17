@@ -1,33 +1,33 @@
 {
-  "cash": 397.7046024322299,
+  "cash": 537.456700973484,
   "holdings": {
     "3MINDIA": {
       "shares": 1.0,
       "buy_price": 32800.0,
-      "current_price": 31590.0
-    },
-    "LODHA": {
-      "shares": 26.0,
-      "buy_price": 1064.800048828125,
-      "current_price": 1064.800048828125
+      "current_price": 31935.0
     },
     "HINDZINC": {
-      "shares": 50.0,
+      "shares": 52.0,
       "buy_price": 560.9000244140625,
-      "current_price": 560.9000244140625
+      "current_price": 567.5
     },
-    "SARDAEN": {
-      "shares": 57.0,
-      "buy_price": 501.3500061035156,
-      "current_price": 501.3500061035156
+    "DIXON": {
+      "shares": 2.0,
+      "buy_price": 13181.0,
+      "current_price": 13181.0
     },
-    "HINDCOPPER": {
-      "shares": 58.0,
-      "buy_price": 490.2400207519531,
-      "current_price": 490.2400207519531
+    "BHARTIARTL": {
+      "shares": 15.0,
+      "buy_price": 1835.0,
+      "current_price": 1835.0
+    },
+    "GESHIP": {
+      "shares": 21.0,
+      "buy_price": 1391.5999755859375,
+      "current_price": 1391.5999755859375
     }
   },
-  "last_updated_date": "2026-09-16",
+  "last_updated_date": "2026-09-17",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -104,6 +104,10 @@
     {
       "date": "2026-09-16",
       "nav": 144728.37864418028
+    },
+    {
+      "date": "2026-09-17",
+      "nav": 145093.05618827816
     }
   ]
 }
