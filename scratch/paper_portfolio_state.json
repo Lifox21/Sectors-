@@ -1,33 +1,33 @@
 {
-  "cash": 187.67720225523226,
+  "cash": 88.43708866880252,
   "holdings": {
     "BHARTIARTL": {
       "shares": 16.0,
       "buy_price": 1835.0,
-      "current_price": 1893.300048828125
-    },
-    "MCX": {
-      "shares": 9.0,
-      "buy_price": 3260.0,
-      "current_price": 3260.0
-    },
-    "HBLENGINE": {
-      "shares": 42.0,
-      "buy_price": 760.0,
-      "current_price": 760.0
-    },
-    "DIXON": {
-      "shares": 2.0,
-      "buy_price": 12995.0,
-      "current_price": 12995.0
+      "current_price": 1817.199951171875
     },
     "GIPCL": {
-      "shares": 170.0,
+      "shares": 166.0,
       "buy_price": 188.35000610351562,
-      "current_price": 188.35000610351562
+      "current_price": 186.9199981689453
+    },
+    "3MINDIA": {
+      "shares": 1.0,
+      "buy_price": 34220.0,
+      "current_price": 34220.0
+    },
+    "POLYCAB": {
+      "shares": 3.0,
+      "buy_price": 8350.0,
+      "current_price": 8350.0
+    },
+    "BHARTIHEXA": {
+      "shares": 19.0,
+      "buy_price": 1534.300048828125,
+      "current_price": 1534.300048828125
     }
   },
-  "last_updated_date": "2026-09-21",
+  "last_updated_date": "2026-09-22",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -116,6 +116,10 @@
     {
       "date": "2026-09-21",
       "nav": 149749.9790211029
+    },
+    {
+      "date": "2026-09-22",
+      "nav": 148614.0569311981
     }
   ]
 }
