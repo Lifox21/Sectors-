@@ -1,33 +1,33 @@
 {
-  "cash": 87.09404048154465,
+  "cash": 1117.5662677154469,
   "holdings": {
     "3MINDIA": {
       "shares": 1.0,
       "buy_price": 34220.0,
-      "current_price": 34615.0
-    },
-    "POLYCAB": {
-      "shares": 3.0,
-      "buy_price": 8417.0,
-      "current_price": 8417.0
+      "current_price": 34590.0
     },
     "GESHIP": {
       "shares": 19.0,
       "buy_price": 1483.800048828125,
-      "current_price": 1483.800048828125
+      "current_price": 1482.5999755859375
     },
-    "HBLENGINE": {
-      "shares": 39.0,
-      "buy_price": 764.3499755859375,
-      "current_price": 764.3499755859375
+    "BHARTIARTL": {
+      "shares": 15.0,
+      "buy_price": 1795.800048828125,
+      "current_price": 1795.800048828125
     },
-    "GIPCL": {
-      "shares": 160.0,
-      "buy_price": 191.63999938964844,
-      "current_price": 191.63999938964844
+    "TATACOMM": {
+      "shares": 17.0,
+      "buy_price": 1670.0,
+      "current_price": 1670.0
+    },
+    "BHARTIHEXA": {
+      "shares": 19.0,
+      "buy_price": 1507.199951171875,
+      "current_price": 1507.199951171875
     }
   },
-  "last_updated_date": "2026-09-24",
+  "last_updated_date": "2026-09-25",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -128,6 +128,10 @@
     {
       "date": "2026-09-24",
       "nav": 148617.34391841124
+    },
+    {
+      "date": "2026-09-25",
+      "nav": 147840.76560853576
     }
   ]
 }
