@@ -1,33 +1,33 @@
 {
-  "cash": 768.2047041168162,
+  "cash": 561.4589748687686,
   "holdings": {
     "BHARTIARTL": {
       "shares": 15.0,
       "buy_price": 1795.800048828125,
-      "current_price": 1771.199951171875
+      "current_price": 1757.0
     },
     "BHARTIHEXA": {
-      "shares": 20.0,
+      "shares": 19.0,
       "buy_price": 1507.199951171875,
-      "current_price": 1409.4000244140625
+      "current_price": 1424.5
     },
     "3MINDIA": {
       "shares": 1.0,
       "buy_price": 33415.0,
-      "current_price": 31890.0
+      "current_price": 32160.0
     },
     "TATACOMM": {
       "shares": 17.0,
       "buy_price": 1654.699951171875,
-      "current_price": 1654.699951171875
+      "current_price": 1656.199951171875
     },
-    "ASTRAMICRO": {
-      "shares": 17.0,
-      "buy_price": 1652.5999755859375,
-      "current_price": 1652.5999755859375
+    "HBLENGINE": {
+      "shares": 37.0,
+      "buy_price": 794.5,
+      "current_price": 794.5
     }
   },
-  "last_updated_date": "2026-09-30",
+  "last_updated_date": "2026-10-01",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -144,6 +144,10 @@
     {
       "date": "2026-09-30",
       "nav": 143638.303214859
+    },
+    {
+      "date": "2026-10-01",
+      "nav": 143693.85814479063
     }
   ]
 }
