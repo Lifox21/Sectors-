@@ -14,9 +14,9 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Metric | Value |
 | :--- | :--- |
-| 💰 **Total Net Asset Value (NAV)** | **₹143,693.86** |
-| 🏦 **Cash Balance** | **₹561.46** |
-| 📊 **Total Return (ROI)** | **-4.2041%** |
+| 💰 **Total Net Asset Value (NAV)** | **₹141,121.64** |
+| 🏦 **Cash Balance** | **₹862.20** |
+| 📊 **Total Return (ROI)** | **-5.9189%** |
 | 📅 **Last Synchronization** | **2026-10-01** |
 | 🏁 **Portfolio Start Date** | **2026-08-10** |
 
@@ -26,11 +26,11 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Stock Symbol | Sector | Shares | Avg Cost Price | Current Close | Market Value | ROI (%) | Allocation (%) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **BHARTIARTL** | telecommunications | 15.0000 | ₹1,795.80 | ₹1,757.00 | ₹26,355.00 | -2.16% | 18.3% |
-| **BHARTIHEXA** | telecommunications | 19.0000 | ₹1,507.20 | ₹1,424.50 | ₹27,065.50 | -5.49% | 18.8% |
-| **3MINDIA** | diversified | 1.0000 | ₹33,415.00 | ₹32,160.00 | ₹32,160.00 | -3.76% | 22.4% |
-| **TATACOMM** | telecommunications | 17.0000 | ₹1,654.70 | ₹1,656.20 | ₹28,155.40 | +0.09% | 19.6% |
-| **HBLENGINE** | automobiles | 37.0000 | ₹794.50 | ₹794.50 | ₹29,396.50 | +0.00% | 20.5% |
+| **BHARTIARTL** | telecommunications | 15.0000 | ₹1,795.80 | ₹1,741.10 | ₹26,116.50 | -3.05% | 18.5% |
+| **BHARTIHEXA** | telecommunications | 20.0000 | ₹1,507.20 | ₹1,379.20 | ₹27,584.00 | -8.49% | 19.5% |
+| **3MINDIA** | diversified | 1.0000 | ₹33,415.00 | ₹30,795.00 | ₹30,795.00 | -7.84% | 21.8% |
+| **TATACOMM** | telecommunications | 16.0000 | ₹1,654.70 | ₹1,683.00 | ₹26,928.00 | +1.71% | 19.1% |
+| **HBLENGINE** | automobiles | 37.0000 | ₹794.50 | ₹779.35 | ₹28,835.95 | -1.91% | 20.4% |
 
 ---
 
@@ -38,6 +38,8 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 
 | Date | Ticker | Action | Shares | Price | Commission (10 bps) | Cash Impact |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| 2026-10-01 | **BHARTIHEXA** | `BUY` | 1.0000 | ₹1,379.20 | ₹1.38 | ₹-1,380.58 |
+| 2026-10-01 | **TATACOMM** | `SELL` | 1.0000 | ₹1,683.00 | ₹1.68 | +₹1,681.32 |
 | 2026-10-01 | **HBLENGINE** | `BUY` | 37.0000 | ₹794.50 | ₹29.40 | ₹-29,425.90 |
 | 2026-10-01 | **BHARTIHEXA** | `SELL` | 1.0000 | ₹1,424.50 | ₹1.42 | +₹1,423.08 |
 | 2026-10-01 | **ASTRAMICRO** | `SELL` | 17.0000 | ₹1,636.70 | ₹27.82 | +₹27,796.08 |
@@ -46,8 +48,6 @@ This repository implements a **Gaussian Hidden Markov Model (HMM)** sector-switc
 | 2026-09-30 | **TATACOMM** | `BUY` | 17.0000 | ₹1,654.70 | ₹28.13 | ₹-28,158.03 |
 | 2026-09-30 | **HBLENGINE** | `SELL` | 38.0000 | ₹808.30 | ₹30.72 | +₹30,684.68 |
 | 2026-09-30 | **GESHIP** | `SELL` | 18.0000 | ₹1,537.80 | ₹27.68 | +₹27,652.72 |
-| 2026-09-29 | **BHARTIHEXA** | `SELL` | 2.0000 | ₹1,426.50 | ₹2.85 | +₹2,850.15 |
-| 2026-09-29 | **GESHIP** | `SELL` | 2.0000 | ₹1,533.40 | ₹3.07 | +₹3,063.73 |
 
 ---
 
