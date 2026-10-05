@@ -1,5 +1,5 @@
 {
-  "cash": 862.1968237457218,
+  "cash": 100.56964662169776,
   "holdings": {
     "BHARTIARTL": {
       "shares": 15.0,
@@ -16,18 +16,18 @@
       "buy_price": 33415.0,
       "current_price": 30795.0
     },
-    "TATACOMM": {
-      "shares": 16.0,
-      "buy_price": 1654.699951171875,
-      "current_price": 1683.0
+    "GESHIP": {
+      "shares": 18.0,
+      "buy_price": 1530.5999755859375,
+      "current_price": 1530.5999755859375
     },
-    "HBLENGINE": {
-      "shares": 37.0,
-      "buy_price": 794.5,
-      "current_price": 779.3499755859375
+    "HINDZINC": {
+      "shares": 52.0,
+      "buy_price": 555.0499877929688,
+      "current_price": 555.0499877929688
     }
   },
-  "last_updated_date": "2026-10-01",
+  "last_updated_date": "2026-10-05",
   "nav_history": [
     {
       "date": "2026-08-10",
@@ -148,6 +148,10 @@
     {
       "date": "2026-10-01",
       "nav": 141121.64457765198
+    },
+    {
+      "date": "2026-10-05",
+      "nav": 141009.46722962952
     }
   ]
 }
