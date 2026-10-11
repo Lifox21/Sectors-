@@ -1,0 +1,44 @@
+name: Daily Paper Trading
+
+on:
+  schedule:
+    # 18:00 IST on weekdays. GitHub Actions schedules are expressed in UTC.
+    - cron: "30 12 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-paper-trading
+  cancel-in-progress: false
+
+jobs:
+  run-paper-trading:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate daily signal, fills, and tracking artifacts
+        env:
+          TZ: Asia/Kolkata
+        run: python paper_trading.py
+
+      - name: Commit paper-trading artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md Indices Stocks scored_csv scratch
+          git diff --cached --quiet || git commit -m "chore: update daily paper-trading records"
+          git push
