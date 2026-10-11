@@ -1,0 +1,21 @@
+{
+  "initial_capital": 150000.0,
+  "max_positions": 5,
+  "max_stocks_per_sector": 1,
+  "swap_margin": 0.15,
+  "min_holding_days": 5,
+  "stop_loss_pct": 0.08,
+  "poll_interval_seconds": 60,
+  "auto_git_push": true,
+  "git_sync_interval_seconds": 900,
+  "cost_model": {
+    "brokerage_bps": 0.0,
+    "exchange_transaction_bps": 0.3,
+    "sebi_turnover_bps": 0.01,
+    "gst_rate": 0.18,
+    "stamp_duty_buy_bps": 1.5,
+    "stt_sell_bps": 10.0,
+    "slippage_bps": 10.0
+  }
+}
+

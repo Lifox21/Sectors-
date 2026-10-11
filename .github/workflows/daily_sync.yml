@@ -1,11 +1,15 @@
 name: Daily Market Data & HMM Sync
 
 on:
-  push:
-    branches: [ master ]
   schedule:
-    # Trigger at 03:00 PM UTC (8:30 PM IST) Monday through Friday.
-    - cron: '00 15 * * 1-5'
+    # Trigger throughout Indian market hours Monday-Friday (IST = UTC + 5:30):
+    # 03:45 UTC = 09:15 AM IST (Market Open Fills)
+    # 05:30 UTC = 11:00 AM IST (Morning Check)
+    # 07:30 UTC = 01:00 PM IST (Mid-Day Check)
+    # 09:45 UTC = 03:15 PM IST (Market Close Rebalance Window)
+    # 10:30 UTC = 04:00 PM IST (Post-Market Settlement)
+    - cron: '45 3,9 * * 1-5'
+    - cron: '30 5,7,10 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -28,7 +32,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           cache: 'pip'
 
       - name: Install Dependencies
@@ -36,30 +40,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Market Sync, Portfolio Rebalance, and README Update
+      - name: Run Continuous Trading Bot Cycle
         run: |
-          python scratch/sync_portfolio_and_readme.py
-
-      - name: Create GitHub Issue on Signal Change
-        if: env.SIGNAL_CHANGE == 'true' && hashFiles('scratch/daily_signals.md') != ''
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          title="ACTION REQUIRED: HMM Portfolio Rebalance - $(TZ='Asia/Kolkata' date +'%Y-%m-%d')"
-          if gh issue list --state open --search "$title in:title" --json title --jq '.[].title' | grep -Fx "$title"; then
-            echo "Issue already exists for today's rebalance signal."
-          else
-            gh issue create --title "$title" --body-file scratch/daily_signals.md
-          fi
+          python trading_bot.py --once --no-push --force-active
 
       - name: Commit and Push Updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Indices/Daily/*.csv scratch/paper_portfolio_state.json scratch/paper_trade_log.csv README.md
+          git add README.md scratch/paper_portfolio_state.json scratch/paper_trade_log.csv scratch/paper_snapshots scored_csv/daily_ranking.csv Indices/Daily/*.csv
           if git diff --cached --quiet; then
             echo "No tracked portfolio updates to commit."
           else
             git commit -m "Auto-update portfolio metrics, README dashboard, and HMM regimes [skip ci]"
             git push
           fi
+
