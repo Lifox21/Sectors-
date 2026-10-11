@@ -5,22 +5,13 @@ import warnings
 import numpy as np
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from hmmlearn.hmm import GaussianHMM
+from strategy_core import causal_smoothing, filter_hmm_observations, fit_hmm_for_walk_forward
 
 warnings.filterwarnings("ignore")
 
 # =====================================================================
 # 1. CANDLE SMOOTHING & FEATURE EXTRACTION
 # =====================================================================
-
-def causal_smoothing(series, k):
-    """
-    Computes causal rolling mean of the price series over window k.
-    This strictly uses past and current bars, never future bars.
-    """
-    if k <= 1:
-        return series
-    return series.rolling(window=k).mean()
 
 def fit_ols_ar1_residuals(prices, t_curr, t_end):
     """
@@ -69,7 +60,7 @@ def extract_features_df(df_sector, k):
 # 2. WALK-FORWARD HMM DECODER
 # =====================================================================
 
-def run_walk_forward(df_features, t_init, block_size=63, perturb_shift=0):
+def run_walk_forward(df_features, t_init, block_size=63, perturb_shift=0, training_window=756):
     """
     Runs an expanding-window walk-forward HMM fitting loop.
     Features are scaled dynamically using training window statistics only.
@@ -83,8 +74,6 @@ def run_walk_forward(df_features, t_init, block_size=63, perturb_shift=0):
     oos_states = []
     oos_probs = []
     
-    last_hmm = None
-    
     while t_curr < T:
         t_end = min(t_curr + block_size, T)
         
@@ -96,7 +85,8 @@ def run_walk_forward(df_features, t_init, block_size=63, perturb_shift=0):
         df_temp.iloc[:t_end, df_temp.columns.get_loc('ARIMA_Resid')] = residuals
         
         cols = ['Smoothed_Returns', 'Log_Vol', 'ARIMA_Resid']
-        train_x = df_temp[cols].iloc[:t_curr].values
+        train_start = max(0, t_curr - training_window)
+        train_x = df_temp[cols].iloc[train_start:t_curr].values
         oos_x = df_temp[cols].iloc[t_curr:t_end].values
         
         mean = np.mean(train_x, axis=0)
@@ -105,63 +95,25 @@ def run_walk_forward(df_features, t_init, block_size=63, perturb_shift=0):
         train_x_scaled = (train_x - mean) / std
         oos_x_scaled = (oos_x - mean) / std
         
-        # Fit HMM using diag covariance for high speed and stability
-        if last_hmm is None:
-            hmm = GaussianHMM(n_components=3, covariance_type='diag', n_iter=20, random_state=42)
-            hmm.fit(train_x_scaled)
-        else:
-            hmm = GaussianHMM(n_components=3, covariance_type='diag', n_iter=5, init_params='')
-            hmm.n_features = last_hmm.n_features
-            hmm.startprob_ = last_hmm.startprob_.copy()
-            hmm.transmat_ = last_hmm.transmat_.copy()
-            hmm.means_ = last_hmm.means_.copy()
-            
-            # Extract diagonal elements for 'diag' covariance to bypass hmmlearn setter quirk
-            if last_hmm.covariance_type == 'diag':
-                if last_hmm.covars_.ndim == 3:
-                    hmm.covars_ = np.array([np.diag(c) for c in last_hmm.covars_]).copy()
-                else:
-                    hmm.covars_ = last_hmm.covars_.copy()
-            else:
-                hmm.covars_ = last_hmm.covars_.copy()
-                
-            try:
-                hmm.fit(train_x_scaled)
-            except Exception:
-                hmm = GaussianHMM(n_components=3, covariance_type='diag', n_iter=20, random_state=42)
-                hmm.fit(train_x_scaled)
-                
-        last_hmm = hmm
-        
-        # Sort HMM states by mean training return
-        train_pred_states = hmm.predict(train_x_scaled)
-        train_returns = df_temp['Smoothed_Returns'].iloc[:t_curr].values
-        
-        state_means = []
-        for s in range(3):
-            mask = (train_pred_states == s)
-            if np.sum(mask) > 0:
-                state_means.append(np.mean(train_returns[mask]))
-            else:
-                state_means.append(-999.0)
-                
-        sorted_indices = np.argsort(state_means)
-        # Mapping: State 0 (highest return), 1 (middle return), 2 (lowest return)
-        mapping = {sorted_indices[2]: 0, sorted_indices[1]: 1, sorted_indices[0]: 2}
-        
-        # Decode and predict out-of-sample block
-        block_pred_states = hmm.predict(oos_x_scaled)
-        block_pred_labels = [mapping[s] for s in block_pred_states]
-        
-        block_probs = hmm.predict_proba(oos_x_scaled)
-        sorted_probs = np.zeros_like(block_probs)
-        sorted_probs[:, 0] = block_probs[:, sorted_indices[2]] # Bullish (0)
-        sorted_probs[:, 1] = block_probs[:, sorted_indices[1]] # Neutral (1)
-        sorted_probs[:, 2] = block_probs[:, sorted_indices[0]] # Bearish (2)
+        # Fit only on the expanding training history. Each OOS row is filtered
+        # individually below, so it cannot borrow information from later rows.
+        hmm, mapping = fit_hmm_for_walk_forward(
+            train_x_scaled,
+            df_temp['Smoothed_Returns'].iloc[train_start:t_curr].values,
+        )
+
+        # The final training posterior is the prior for the first OOS day.
+        train_posterior = hmm.predict_proba(train_x_scaled)[-1]
+        block_pred_labels, sorted_probs = filter_hmm_observations(
+            hmm,
+            train_posterior,
+            oos_x_scaled,
+            mapping,
+        )
         
         oos_dates.extend(df_temp['Date'].iloc[t_curr:t_end].tolist())
         oos_states.extend(block_pred_labels)
-        oos_probs.extend(sorted_probs.tolist())
+        oos_probs.extend(sorted_probs)
         
         t_curr = t_end
         

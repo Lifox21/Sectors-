@@ -4,12 +4,11 @@ on:
   schedule:
     # Trigger throughout Indian market hours Monday-Friday (IST = UTC + 5:30):
     # 03:45 UTC = 09:15 AM IST (Market Open Fills)
-    # 05:30 UTC = 11:00 AM IST (Morning Check)
-    # 07:30 UTC = 01:00 PM IST (Mid-Day Check)
-    # 09:45 UTC = 03:15 PM IST (Market Close Rebalance Window)
-    # 10:30 UTC = 04:00 PM IST (Post-Market Settlement)
-    - cron: '45 3,9 * * 1-5'
-    - cron: '30 5,7,10 * * 1-5'
+    # 04:15 - 09:45 UTC = Every 30 mins (09:45 AM to 03:15 PM IST)
+    # 10:30 UTC = 04:00 PM IST (Post-Market Settlement & Dashboard Push)
+    - cron: '45 3 * * 1-5'
+    - cron: '15,45 4,5,6,7,8,9 * * 1-5'
+    - cron: '30 10 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -18,16 +17,18 @@ permissions:
 
 concurrency:
   group: daily-market-sync-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   sync-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -48,11 +49,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md scratch/paper_portfolio_state.json scratch/paper_trade_log.csv scratch/paper_snapshots scored_csv/daily_ranking.csv Indices/Daily/*.csv
+          git add README.md scratch/paper_portfolio_state.json scratch/paper_trade_log.csv scratch/paper_snapshots scored_csv/daily_ranking.csv Indices/Daily/*.csv plots/*
           if git diff --cached --quiet; then
             echo "No tracked portfolio updates to commit."
           else
             git commit -m "Auto-update portfolio metrics, README dashboard, and HMM regimes [skip ci]"
-            git push
+            git pull --rebase origin master || true
+            git push origin master
           fi
 

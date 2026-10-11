@@ -11,6 +11,19 @@ from hmmlearn.hmm import GaussianHMM
 # Ignore convergence and user warnings for cleaner output
 warnings.filterwarnings("ignore")
 
+
+def causal_hmm_filter(model, train_features, test_features):
+    """Return raw HMM states for test rows without smoothing over later test rows."""
+    posterior = model.predict_proba(train_features)[-1]
+    raw_states = []
+    for log_likelihood in model._compute_log_likelihood(test_features):
+        prior = posterior @ model.transmat_
+        likelihood = np.exp(log_likelihood - np.max(log_likelihood))
+        posterior = prior * likelihood
+        posterior /= posterior.sum()
+        raw_states.append(int(np.argmax(posterior)))
+    return np.asarray(raw_states, dtype=int)
+
 # =====================================================================
 # 1. DATA PREPROCESSING & FEATURE ENGINEERING
 # =====================================================================
@@ -336,11 +349,11 @@ def run_pipeline():
                 hmm_model = GaussianHMM(n_components=2, covariance_type="diag", n_iter=100, random_state=42)
                 hmm_model.fit(X_train_std)
                 
-            # Decode optimal paths (Viterbi) continuously across the full set to ensure state continuity
+            # Train states are used only to label the fitted components. Test states
+            # are filtered one day at a time, avoiding future-test-data leakage.
             hmm_train_lik, train_hmm_states = hmm_model.decode(X_train_std)
-            hmm_oos_lik, test_hmm_states = hmm_model.decode(X_test_std)
-            
-            _, all_hmm_states = hmm_model.decode(X_std)
+            test_hmm_states = causal_hmm_filter(hmm_model, X_train_std, X_test_std)
+            hmm_oos_lik = hmm_model.score(X_test_std)
             
             # Label states post-hoc (State 0 = Bullish/Stable, higher return in train returns)
             returns_train = df['Returns'].values[:train_len]
@@ -350,13 +363,14 @@ def run_pipeline():
             hmm_to_regime = {0: 0, 1: 1} if state_means[0] > state_means[1] else {0: 1, 1: 0}
             
             # Map HMM states to regime
-            all_hmm_regimes = np.array([hmm_to_regime[s] for s in all_hmm_states])
-            train_hmm_regimes = all_hmm_regimes[:train_len]
-            test_hmm_regimes = all_hmm_regimes[train_len:]
+            train_hmm_regimes = np.array([hmm_to_regime[s] for s in train_hmm_states])
+            test_hmm_regimes = np.array([hmm_to_regime[s] for s in test_hmm_states])
+            all_hmm_regimes = np.concatenate([train_hmm_regimes, test_hmm_regimes])
             
             # Calculate HMM's fitted expected durations in training set: 1 / (1 - P_jj)
-            hmm_expected_d0 = 1.0 / (1.0 - hmm_model.transmat_[hmm_to_regime[0], hmm_to_regime[0]] + 1e-10)
-            hmm_expected_d1 = 1.0 / (1.0 - hmm_model.transmat_[hmm_to_regime[1], hmm_to_regime[1]] + 1e-10)
+            regime_to_hmm = {regime: raw_state for raw_state, regime in hmm_to_regime.items()}
+            hmm_expected_d0 = 1.0 / (1.0 - hmm_model.transmat_[regime_to_hmm[0], regime_to_hmm[0]] + 1e-10)
+            hmm_expected_d1 = 1.0 / (1.0 - hmm_model.transmat_[regime_to_hmm[1], regime_to_hmm[1]] + 1e-10)
             
             # 3. HSMM Fitting (Estimating parameters on HMM training regimes)
             means = np.zeros((2, 2))

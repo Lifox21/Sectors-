@@ -5,17 +5,13 @@ import warnings
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
+from strategy_core import evaluate_hmm_regime, load_rankings, ranked_candidates
 
 warnings.filterwarnings("ignore")
 
-# Force absolute imports or append workspace path
-WORKSPACE_DIR = "c:/Users/Ved Bajaj/Desktop/Lifox/QF Club/HHM"
+# Keep the project runnable after a clone or a directory move.
+WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(WORKSPACE_DIR)
-
-try:
-    from hmmlearn.hmm import GaussianHMM
-except ImportError:
-    print("Error: hmmlearn is not installed on this system. Please run 'pip install hmmlearn' to run HMM regime detection.")
 
 # =====================================================================
 # 1. PATH CONFIGURATION
@@ -30,96 +26,13 @@ TRADE_LOG_PATH = os.path.join(WORKSPACE_DIR, "scratch/paper_trade_log.csv")
 os.makedirs(os.path.join(WORKSPACE_DIR, "scratch"), exist_ok=True)
 
 # =====================================================================
-# 2. HMM DECODER HELPERS (REUSED FROM REPLICATE_PIPELINE)
-# =====================================================================
-def causal_smoothing(series, k=2):
-    if k <= 1:
-        return series
-    return series.rolling(window=k).mean()
-
-def fit_ols_ar1_residuals(prices, t_curr):
-    diff = np.diff(prices)
-    train_diff = diff[:t_curr - 1]
-    
-    if len(train_diff) < 3:
-        resid = np.zeros(len(prices))
-        resid[1:] = diff
-        return resid
-        
-    y = train_diff[1:]
-    x = train_diff[:-1]
-    X = np.column_stack([np.ones_like(x), x])
-    try:
-        beta, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
-        c, phi = beta[0], beta[1]
-    except Exception:
-        c, phi = 0.0, 0.0
-        
-    diff_full = diff
-    resid = np.zeros(len(prices))
-    resid[1] = diff_full[0] - c
-    if len(diff_full) > 1:
-        resid[2:] = diff_full[1:] - (c + phi * diff_full[:-1])
-    return resid
-
-def evaluate_hmm_regime(df_sector, target_idx, k=2):
-    """
-    Fits the Gaussian HMM on features up to target_idx and returns the predicted state for target_idx.
-    State 0 = Bullish (highest mean return), State 1 = Neutral, State 2 = Bearish.
-    """
-    df = df_sector.iloc[:target_idx + 1].copy()
-    df['Close_smoothed'] = causal_smoothing(df['Close'], k)
-    df['Smoothed_Returns'] = np.log(df['Close_smoothed'] / df['Close_smoothed'].shift(1))
-    df['Vol'] = df['Smoothed_Returns'].rolling(window=10).std()
-    df['Log_Vol'] = np.log(df['Vol'] + 1e-8)
-    df = df.dropna().reset_index(drop=True)
-    
-    T_curr = len(df)
-    if T_curr < 100:  # Minimum history required to fit HMM stably
-        return 1 # Default neutral state
-        
-    prices = df['Close_smoothed'].values
-    residuals = fit_ols_ar1_residuals(prices, T_curr)
-    df['ARIMA_Resid'] = residuals
-    
-    cols = ['Smoothed_Returns', 'Log_Vol', 'ARIMA_Resid']
-    X = df[cols].values
-    
-    mean = np.mean(X, axis=0)
-    std = np.std(X, axis=0) + 1e-8
-    X_scaled = (X - mean) / std
-    
-    hmm = GaussianHMM(n_components=3, covariance_type='diag', n_iter=20, random_state=42)
-    try:
-        hmm.fit(X_scaled)
-    except Exception:
-        return 1 # Fallback to Neutral
-        
-    # Determine state mappings based on training returns
-    train_pred_states = hmm.predict(X_scaled)
-    train_returns = df['Smoothed_Returns'].values
-    
-    state_means = []
-    for s in range(3):
-        mask = (train_pred_states == s)
-        if np.sum(mask) > 0:
-            state_means.append(np.mean(train_returns[mask]))
-        else:
-            state_means.append(-999.0)
-            
-    sorted_indices = np.argsort(state_means)
-    mapping = {sorted_indices[2]: 0, sorted_indices[1]: 1, sorted_indices[0]: 2}
-    
-    latest_raw_state = train_pred_states[-1]
-    return mapping[latest_raw_state]
-
-# =====================================================================
 # 3. PORTFOLIO MANAGER CLASS
 # =====================================================================
 class PaperPortfolio:
-    def __init__(self, start_capital=100000.0, transaction_cost_bps=10):
+    def __init__(self, start_capital=150000.0, transaction_cost_bps=10):
         self.state_path = PORTFOLIO_STATE_PATH
         self.log_path = TRADE_LOG_PATH
+        self.start_capital = start_capital
         self.cost_coef = transaction_cost_bps / 10000.0
         self.load_portfolio()
         
@@ -128,6 +41,15 @@ class PaperPortfolio:
             try:
                 with open(self.state_path, 'r') as f:
                     self.state = json.load(f)
+                # Migrate the original CLI schema to the synchronizer schema.
+                if "nav_history" not in self.state:
+                    self.state["nav_history"] = [
+                        {"date": row["date"], "nav": row["portfolio_value"]}
+                        for row in self.state.pop("equity_history", [])
+                    ]
+                self.state.setdefault("initial_capital", self.start_capital)
+                self.state.setdefault("holdings", {})
+                self.state.setdefault("cash", self.state["initial_capital"])
             except Exception:
                 self.reset_portfolio()
         else:
@@ -137,17 +59,18 @@ class PaperPortfolio:
         with open(self.state_path, 'w') as f:
             json.dump(self.state, f, indent=4)
             
-    def reset_portfolio(self, start_capital=100000.0):
+    def reset_portfolio(self, start_capital=150000.0):
         self.state = {
+            "initial_capital": start_capital,
             "cash": start_capital,
             "holdings": {},  # Ticker -> {shares: float, buy_price: float, current_price: float}
             "last_updated_date": None,
-            "equity_history": []
+            "nav_history": []
         }
         self.save_portfolio()
         # Reset trade log
         with open(self.log_path, 'w') as f:
-            f.write("Date,Symbol,Action,Shares,Price,Commission,Total_Cash_Impact\n")
+            f.write("Date,Ticker,Action,Shares,Price,Commission,Cash_Impact\n")
             
     def get_total_value(self):
         holdings_value = 0.0
@@ -167,14 +90,12 @@ class PaperPortfolio:
         self.state["last_updated_date"] = date_str
         
         # Avoid duplicate dates in history
-        history = [h for h in self.state["equity_history"] if h["date"] != date_str]
+        history = [h for h in self.state["nav_history"] if h["date"] != date_str]
         history.append({
             "date": date_str,
-            "portfolio_value": total_val,
-            "cash": self.state["cash"],
-            "holdings_value": total_val - self.state["cash"]
+            "nav": total_val,
         })
-        self.state["equity_history"] = history
+        self.state["nav_history"] = history
         self.save_portfolio()
 
     def execute_trade(self, date_str, symbol, action, shares, price):
@@ -312,7 +233,11 @@ def run_simulation_step(portfolio, date_str, target_stocks_count=5):
             
             # Find the state
             try:
-                state = evaluate_hmm_regime(df_sec, target_idx, k=2)
+                state = evaluate_hmm_regime(
+                    df_sec,
+                    target_date=date_str,
+                    smoothing_window=2,
+                )
                 regimes[sector_name] = state
                 if state == 0:
                     active_sectors.append(sector_name)
@@ -327,21 +252,9 @@ def run_simulation_step(portfolio, date_str, target_stocks_count=5):
         print(f"Error: {GLOBAL_RANKING_PATH} not found. Running with direct ticker mapping fallback.")
         return
         
-    df_rank = pd.read_csv(GLOBAL_RANKING_PATH)
-    
-    # Filter for stocks in active sectors
-    df_active_stocks = df_rank[df_rank['Sector'].isin(active_sectors)]
-    df_active_stocks = df_active_stocks.sort_values(by='Combined Score', ascending=False)
-    
-    # Filter for stocks where we actually have price files
-    available_symbols = []
-    for sym in df_active_stocks['Symbol'].tolist():
-        if os.path.exists(os.path.join(STOCKS_DIR, f"{sym}_daily.csv")):
-            available_symbols.append(sym)
-            if len(available_symbols) >= target_stocks_count * 2:
-                break
-                
-    target_symbols = available_symbols[:target_stocks_count]
+    df_rank = load_rankings(GLOBAL_RANKING_PATH)
+    df_active_stocks = ranked_candidates(df_rank, active_sectors, STOCKS_DIR, date_str)
+    target_symbols = df_active_stocks['Symbol'].head(target_stocks_count).tolist()
     print(f"Target Portfolio Candidates (Top {target_stocks_count}): {', '.join(target_symbols)}")
     
     # Get current prices of all holding stocks and target stocks
@@ -454,7 +367,8 @@ def display_portfolio(portfolio):
             print(f"  {ticker:<12} {data['shares']:<12.4f} INR {data['buy_price']:<10.2f} INR {data['current_price']:<10.2f} INR {val:<12,.2f} {pnl:+.2f}%")
             
     total_val = portfolio.state["cash"] + holdings_val
-    pnl_total = ((total_val - 100000.0) / 100000.0) * 100.0
+    initial_capital = portfolio.state["initial_capital"]
+    pnl_total = ((total_val - initial_capital) / initial_capital) * 100.0
     print(f"\nTotal Holdings Value   : INR {holdings_val:,.2f}")
     print(f"Net Asset Value (NAV)   : INR {total_val:,.2f} ({pnl_total:+.2f}% since inception)")
     print("=====================================================================\n")
@@ -485,7 +399,7 @@ def main_menu():
         print("3. Fast-Forward Simulation (Run 20 Days)")
         print("4. Fetch Live Market Tickers (Yahoo Finance Sync)")
         print("5. View Recent Transaction Logs")
-        print("6. Reset Paper Portfolio to INR 100,000")
+        print("6. Reset Paper Portfolio to INR 150,000")
         print("7. Exit")
         
         choice = input("\nEnter choice (1-7): ").strip()
@@ -557,7 +471,7 @@ def main_menu():
             if confirm == 'y':
                 portfolio.reset_portfolio()
                 curr_sim_idx = start_sim_idx
-                print("Portfolio reset successfully to starting INR 100,000 cash balance.")
+                print("Portfolio reset successfully to starting INR 150,000 cash balance.")
                 
         elif choice == "7":
             print("\nExiting Paper Trading Environment. Goodbye!")
