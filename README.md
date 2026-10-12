@@ -10,7 +10,7 @@ This is a paper-only sector HMM strategy. Signals use the close of day T and eli
 | NAV | Rs. 142,203.98 |
 | Return | -5.20% |
 | Cash | Rs. 574.59 |
-| Latest close | 2026-10-12 |
+| Latest close | 2026-10-13 |
 | Pending next-session targets | None |
 
 ## Holdings
