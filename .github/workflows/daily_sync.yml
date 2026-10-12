@@ -2,15 +2,19 @@ name: Daily Market Data & HMM Sync
 
 on:
   schedule:
-    # Trigger throughout Indian market hours Monday-Friday (IST = UTC + 5:30):
-    # 03:00 UTC = 08:30 AM IST (Pre-Market Morning Verification)
+    # Exact IST mappings (IST = UTC + 5:30):
+    # 03:15 UTC = 08:45 AM IST (Immediate Pre-Market Check)
+    # 03:30 UTC = 09:00 AM IST (Pre-Open Session)
     # 03:45 UTC = 09:15 AM IST (Market Open Order Fills)
     # 04:15 - 09:45 UTC = Every 30 mins (09:45 AM to 03:15 PM IST)
+    # 10:00 UTC = 03:30 PM IST (Market Close)
     # 10:30 UTC = 04:00 PM IST (Post-Market Settlement & Dashboard Push)
-    - cron: '0 3 * * 1-5'
+    - cron: '15 3 * * 1-5'
+    - cron: '30 3 * * 1-5'
     - cron: '45 3 * * 1-5'
     - cron: '15 4-9 * * 1-5'
     - cron: '45 4-9 * * 1-5'
+    - cron: '0 10 * * 1-5'
     - cron: '30 10 * * 1-5'
   workflow_dispatch:
 
@@ -21,6 +25,9 @@ permissions:
 concurrency:
   group: daily-market-sync-${{ github.ref }}
   cancel-in-progress: false
+
+env:
+  TZ: 'Asia/Kolkata'
 
 jobs:
   sync-data:
