@@ -2,13 +2,16 @@ name: Daily Market Data & HMM Sync
 
 on:
   schedule:
-    # 03:45 UTC = 09:15 AM IST (Market Open Order Fills)
-    # 06:00 UTC = 11:30 AM IST (Mid-Day Risk & Valuation)
+    # Exact IST timings during trading hours (IST = UTC + 5:30):
+    # 03:45 UTC = 09:15 AM IST (Market Open Order Execution)
+    # 04:45 - 08:45 UTC = Every hour at :15 IST (10:15, 11:15, 12:15, 13:15, 14:15 IST)
     # 09:45 UTC = 03:15 PM IST (Market Close Rebalance Window)
-    # 10:30 UTC = 04:00 PM IST (Post-Market Settlement & Dashboard Push)
+    # 10:00 UTC = 03:30 PM IST (Market Close Bell)
+    # 10:30 UTC = 04:00 PM IST (Post-Market EOD Settlement & Dashboard Push)
     - cron: '45 3 * * 1-5'
-    - cron: '0 6 * * 1-5'
+    - cron: '45 4-8 * * 1-5'
     - cron: '45 9 * * 1-5'
+    - cron: '0 10 * * 1-5'
     - cron: '30 10 * * 1-5'
   workflow_dispatch:
 
