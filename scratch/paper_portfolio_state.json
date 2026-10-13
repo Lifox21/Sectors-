@@ -4,27 +4,27 @@
     "BHARTIARTL": {
       "shares": 15.0,
       "buy_price": 1810.5,
-      "current_price": 1784.9000244140625
+      "current_price": 1784.800048828125
     },
     "BHARTIHEXA": {
       "shares": 19.0,
       "buy_price": 1386.800048828125,
-      "current_price": 1537.699951171875
+      "current_price": 1540.4000244140625
     },
     "TATACOMM": {
       "shares": 17.0,
       "buy_price": 1659.5999755859375,
-      "current_price": 1671.4000244140625
+      "current_price": 1673.199951171875
     },
     "GESHIP": {
       "shares": 18.0,
       "buy_price": 1567.9000244140625,
-      "current_price": 1531.800048828125
+      "current_price": 1533.0999755859375
     },
     "HBLENGINE": {
       "shares": 41.0,
       "buy_price": 762.4500122070312,
-      "current_price": 703.5
+      "current_price": 705.3499755859375
     }
   },
   "last_updated_date": "2026-10-13",
@@ -179,7 +179,7 @@
     },
     {
       "date": "2026-10-13",
-      "nav": 141394.08630699155
+      "nav": 141573.73450035093
     }
   ],
   "schema_version": 2,
