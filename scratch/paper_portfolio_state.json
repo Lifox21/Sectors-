@@ -4,7 +4,7 @@
     "BHARTIARTL": {
       "shares": 15.0,
       "buy_price": 1810.5,
-      "current_price": 1741.0999755859375
+      "current_price": 1854.0
     },
     "BHARTIHEXA": {
       "shares": 19.0,
@@ -187,7 +187,7 @@
     },
     {
       "date": "2026-10-15",
-      "nav": 143689.88525718686
+      "nav": 145383.3856233978
     }
   ],
   "schema_version": 2,
