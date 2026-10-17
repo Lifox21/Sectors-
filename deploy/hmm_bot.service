@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/Sectors
-ExecStart=/usr/bin/python3 trading_bot.py --loop --interval 60
+ExecStart=/usr/bin/python3 trading_bot.py --loop --interval 60 --remote lifox
 Restart=always
 RestartSec=10
 Environment=PYTHONUNBUFFERED=1

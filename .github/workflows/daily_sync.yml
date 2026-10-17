@@ -1,18 +1,21 @@
 name: Daily Market Data & HMM Sync
 
+# NOTE: Scheduled triggers in GitHub Actions have been disabled to prevent
+# cloud runner queue delays (which caused 15-45 minute execution lags on NSE).
+# Time-critical market execution is now handled by dedicated native Cron / Task Scheduler
+# which executes to the exact second with ZERO delays.
+#
+# Use workflow_dispatch below for manual fallback runs directly from GitHub UI.
+#
+# on:
+#   schedule:
+#     - cron: '45 3 * * 1-5'
+#     - cron: '45 4-8 * * 1-5'
+#     - cron: '45 9 * * 1-5'
+#     - cron: '0 10 * * 1-5'
+#     - cron: '30 10 * * 1-5'
+
 on:
-  schedule:
-    # Exact IST timings during trading hours (IST = UTC + 5:30):
-    # 03:45 UTC = 09:15 AM IST (Market Open Order Execution)
-    # 04:45 - 08:45 UTC = Every hour at :15 IST (10:15, 11:15, 12:15, 13:15, 14:15 IST)
-    # 09:45 UTC = 03:15 PM IST (Market Close Rebalance Window)
-    # 10:00 UTC = 03:30 PM IST (Market Close Bell)
-    # 10:30 UTC = 04:00 PM IST (Post-Market EOD Settlement & Dashboard Push)
-    - cron: '45 3 * * 1-5'
-    - cron: '45 4-8 * * 1-5'
-    - cron: '45 9 * * 1-5'
-    - cron: '0 10 * * 1-5'
-    - cron: '30 10 * * 1-5'
   workflow_dispatch:
 
 permissions:

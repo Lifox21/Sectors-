@@ -67,10 +67,30 @@ logging.basicConfig(
 logger = logging.getLogger("TradingBot")
 
 
-def git_sync_push(commit_msg: str = "Auto-update portfolio metrics and dashboard") -> bool:
+def get_default_remote() -> str:
+    """Detect default git remote: lifox if present, else origin."""
+    try:
+        workspace_dir = Path(__file__).resolve().parent
+        res = subprocess.run(["git", "remote"], cwd=workspace_dir, capture_output=True, text=True)
+        remotes = res.stdout.strip().split()
+        if "lifox" in remotes:
+            return "lifox"
+        if "origin" in remotes:
+            return "origin"
+    except Exception:
+        pass
+    return "lifox"
+
+
+def git_sync_push(
+    commit_msg: str = "Auto-update portfolio metrics and dashboard",
+    remote: str | None = None,
+    branch: str = "master",
+) -> bool:
     """Automatically commit and push portfolio state and README to GitHub."""
     try:
         workspace_dir = Path(__file__).resolve().parent
+        target_remote = remote or get_default_remote()
         tracked_files = [
             "README.md",
             "scratch/paper_portfolio_state.json",
@@ -91,15 +111,15 @@ def git_sync_push(commit_msg: str = "Auto-update portfolio metrics and dashboard
             return False  # No new changes to push
 
         # 3. Pull rebase to avoid merge conflicts with remote
-        subprocess.run(["git", "pull", "--rebase", "origin", "master"], cwd=workspace_dir, capture_output=True, text=True)
+        subprocess.run(["git", "pull", "--rebase", target_remote, branch], cwd=workspace_dir, capture_output=True, text=True)
 
         # 4. Commit with [skip ci] to prevent infinite workflow loops
         full_msg = f"{commit_msg} [skip ci]"
         subprocess.run(["git", "commit", "-m", full_msg], cwd=workspace_dir, check=True, capture_output=True, text=True)
 
         # 5. Push to GitHub
-        subprocess.run(["git", "push", "origin", "master"], cwd=workspace_dir, check=True, capture_output=True, text=True)
-        logger.info(f"[GIT PUSH] Pushed updates to GitHub: {commit_msg}")
+        subprocess.run(["git", "push", target_remote, branch], cwd=workspace_dir, check=True, capture_output=True, text=True)
+        logger.info(f"[GIT PUSH] Pushed updates to GitHub ({target_remote}/{branch}): {commit_msg}")
         return True
     except Exception as exc:
         logger.warning(f"[GIT PUSH] Auto-push to GitHub encountered: {exc}")
@@ -197,6 +217,7 @@ def fetch_live_quotes(symbols: list[str]) -> dict[str, float]:
             progress=False,
             auto_adjust=False,
             threads=True,
+            timeout=10,
         )
         if not data.empty and "Close" in data:
             close_data = data["Close"]
@@ -231,7 +252,7 @@ def fetch_live_quotes(symbols: list[str]) -> dict[str, float]:
 class HMMTradingBot:
     """Automated continuous trading bot executing the HMM sector strategy."""
 
-    def __init__(self, dry_run: bool = False, auto_push: bool | None = None):
+    def __init__(self, dry_run: bool = False, auto_push: bool | None = None, git_remote: str | None = None, git_branch: str | None = None):
         self.dry_run = dry_run
         self.config = load_config()
         self.cost_model = CostModel(**self.config["cost_model"])
@@ -244,6 +265,8 @@ class HMMTradingBot:
             stop_loss_pct=float(self.config.get("stop_loss_pct", 0.08)),
         )
         self.auto_push = self.config.get("auto_git_push", True) if auto_push is None else auto_push
+        self.git_remote = git_remote or self.config.get("git_remote", get_default_remote())
+        self.git_branch = git_branch or self.config.get("git_branch", "master")
         self.last_git_push_time = 0.0
         self.git_sync_interval = float(self.config.get("git_sync_interval_seconds", 900))
 
@@ -282,6 +305,7 @@ class HMMTradingBot:
                 print(f" {sym:<12} {sh:>8.0f} Rs. {buy_p:>10.2f} Rs. {cur_p:>10.2f} Rs. {mkt_val:>10.2f} {color_pnl:>10}")
 
         print("=" * 80)
+        sys.stdout.flush()
 
     def check_stop_losses(self, live_prices: dict[str, float]) -> list[str]:
         """Check all positions against the risk stop-loss threshold."""
@@ -315,7 +339,11 @@ class HMMTradingBot:
                         logger.info(f"[FILL] Stop-loss executed SELL for {sym}: Cash impact +Rs. {trade['Cash_Impact']:,.2f}")
                         save_state(self.state)
                         if self.auto_push:
-                            git_sync_push(f"Execute stop-loss SELL for {sym} at Rs. {cur_price:.2f}")
+                            git_sync_push(
+                                f"Execute stop-loss SELL for {sym} at Rs. {cur_price:.2f}",
+                                remote=self.git_remote,
+                                branch=self.git_branch,
+                            )
                 exits_triggered.append(sym)
 
         return exits_triggered
@@ -389,7 +417,11 @@ class HMMTradingBot:
         self.state["pending_rebalance"] = None
         save_state(self.state)
         if executed_any and self.auto_push:
-            git_sync_push(f"Execute market-open rebalance fills [{now_date}]")
+            git_sync_push(
+                f"Execute market-open rebalance fills [{now_date}]",
+                remote=self.git_remote,
+                branch=self.git_branch,
+            )
 
 
     def evaluate_strategy_cycle(self) -> list[str]:
@@ -473,7 +505,11 @@ class HMMTradingBot:
         # 7. Periodic Git Push to GitHub
         current_time = time.time()
         if self.auto_push and (current_time - self.last_git_push_time >= self.git_sync_interval):
-            pushed = git_sync_push(f"Auto-update portfolio metrics, README dashboard [{now_date}]")
+            pushed = git_sync_push(
+                f"Auto-update portfolio metrics, README dashboard [{now_date}]",
+                remote=self.git_remote,
+                branch=self.git_branch,
+            )
             if pushed:
                 self.last_git_push_time = current_time
 
@@ -533,8 +569,16 @@ def main():
     parser.add_argument("--auto-push", dest="auto_push", action="store_true", default=None, help="Force enable auto Git push to GitHub")
     parser.add_argument("--no-push", dest="auto_push", action="store_false", help="Disable auto Git push to GitHub")
 
+    parser.add_argument("--remote", default=None, help="Git remote to push/pull (defaults to config or 'lifox')")
+    parser.add_argument("--branch", default="master", help="Git branch to push/pull (default: master)")
+
     args = parser.parse_args()
-    bot = HMMTradingBot(dry_run=args.dry_run, auto_push=args.auto_push)
+    bot = HMMTradingBot(
+        dry_run=args.dry_run,
+        auto_push=args.auto_push,
+        git_remote=args.remote,
+        git_branch=args.branch,
+    )
 
     if args.status:
         watched = list(bot.state["holdings"].keys())

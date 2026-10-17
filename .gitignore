@@ -10,6 +10,7 @@ Data_Enhanced.csv
 
 # Temporary simulation databases and outputs
 scratch/daily_run_log.txt
+scratch/*.log
 summary_temp.csv
 
 # Media & Documentation formats

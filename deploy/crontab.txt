@@ -1,0 +1,35 @@
+# ==============================================================================
+# Linux VPS Crontab Configuration for HMM Quantitative Trading System
+# All jobs run at exact Indian Standard Time (IST) market timings with ZERO delay.
+# Repository: Lifox21/Sectors- (remote: lifox)
+# ==============================================================================
+# To install on your Linux VPS:
+#   crontab deploy/crontab.txt
+#
+# To view active cron jobs:
+#   crontab -l
+# ==============================================================================
+
+# Ensure standard environment variables
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+CRON_TZ=Asia/Kolkata
+
+# 1. 09:15 AM IST (Mon-Fri) - Market Open Order Execution
+15 9 * * 1-5 cd $HOME/Sectors && /usr/bin/python3 cron_checkpoint.py --action market-open --remote lifox >> $HOME/Sectors/scratch/cron_run.log 2>&1
+
+# 2. Hourly Intraday Surveillance & Stop-Loss Check (10:15, 11:15, 12:15, 13:15, 14:15 IST)
+15 10-14 * * 1-5 cd $HOME/Sectors && /usr/bin/python3 cron_checkpoint.py --action hourly-check --remote lifox >> $HOME/Sectors/scratch/cron_run.log 2>&1
+
+# 3. 03:15 PM IST (Mon-Fri) - Portfolio Rebalance Window (Evaluate HMM Swaps & Queue Next Orders)
+15 15 * * 1-5 cd $HOME/Sectors && /usr/bin/python3 cron_checkpoint.py --action rebalance --remote lifox >> $HOME/Sectors/scratch/cron_run.log 2>&1
+
+# 4. 03:30 PM IST (Mon-Fri) - Market Close Bell & NAV Finalization
+30 15 * * 1-5 cd $HOME/Sectors && /usr/bin/python3 cron_checkpoint.py --action market-close --remote lifox >> $HOME/Sectors/scratch/cron_run.log 2>&1
+
+# 5. 04:00 PM IST (Mon-Fri) - Post-Market Settlement & Dashboard Push to Lifox
+0 16 * * 1-5 cd $HOME/Sectors && /usr/bin/python3 cron_checkpoint.py --action eod-sync --remote lifox >> $HOME/Sectors/scratch/cron_run.log 2>&1
+
+# 6. Watchdog Heartbeat (Every 15 mins during trading hours: 09:00 - 15:30 IST)
+# Verifies systemd daemon (hmm_bot.service) is running; automatically recovers if stopped.
+*/15 9-15 * * 1-5 cd $HOME/Sectors && /usr/bin/python3 cron_checkpoint.py --action watchdog --remote lifox >> $HOME/Sectors/scratch/cron_run.log 2>&1
