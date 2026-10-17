@@ -43,6 +43,7 @@ from paper_trading import (
     update_stock_histories,
 )
 from strategy_core import SwapPolicy, load_rankings, ranked_candidates
+from telegram_notifier import notifier
 
 # Ensure Windows terminal encoding compatibility
 if sys.platform == "win32":
@@ -267,6 +268,7 @@ class HMMTradingBot:
         self.auto_push = self.config.get("auto_git_push", True) if auto_push is None else auto_push
         self.git_remote = git_remote or self.config.get("git_remote", get_default_remote())
         self.git_branch = git_branch or self.config.get("git_branch", "master")
+        self.notifier = notifier
         self.last_git_push_time = 0.0
         self.git_sync_interval = float(self.config.get("git_sync_interval_seconds", 900))
 
@@ -338,6 +340,14 @@ class HMMTradingBot:
                     if trade:
                         logger.info(f"[FILL] Stop-loss executed SELL for {sym}: Cash impact +Rs. {trade['Cash_Impact']:,.2f}")
                         save_state(self.state)
+                        self.notifier.notify_stop_loss(
+                            symbol=sym,
+                            buy_price=buy_price,
+                            trigger_price=cur_price,
+                            loss_pct=loss * 100.0,
+                            shares=int(pos["shares"]),
+                            cash_impact=float(trade.get("Cash_Impact", 0.0)),
+                        )
                         if self.auto_push:
                             git_sync_push(
                                 f"Execute stop-loss SELL for {sym} at Rs. {cur_price:.2f}",
@@ -386,6 +396,14 @@ class HMMTradingBot:
                 if trade:
                     executed_any = True
                     logger.info(f"[FILL] Rebalance exit SELL {sym} x {shares}")
+                    self.notifier.notify_trade_fill(
+                        symbol=sym,
+                        side="SELL",
+                        shares=shares,
+                        price=ref_price,
+                        remaining_cash=float(self.state.get("cash", 0.0)),
+                        trade_reason="Rebalance Exit",
+                    )
 
         # Compute target allocations
         current_nav = portfolio_value(self.state, live_prices)
@@ -413,6 +431,14 @@ class HMMTradingBot:
                 if trade:
                     executed_any = True
                     logger.info(f"[FILL] Rebalance entry BUY {sym} x {diff} @ Rs. {price:.2f}")
+                    self.notifier.notify_trade_fill(
+                        symbol=sym,
+                        side="BUY",
+                        shares=diff,
+                        price=price,
+                        remaining_cash=float(self.state.get("cash", 0.0)),
+                        trade_reason="Rebalance Target Entry",
+                    )
 
         self.state["pending_rebalance"] = None
         save_state(self.state)
@@ -463,6 +489,11 @@ class HMMTradingBot:
                 "target_weights": {s: 1.0 / len(target_symbols) for s in target_symbols},
             }
             save_state(self.state)
+            self.notifier.notify_rebalance_signal(
+                active_sectors=active_sectors,
+                target_symbols=target_symbols,
+                exit_reasons=exit_reasons,
+            )
 
         return active_sectors
 

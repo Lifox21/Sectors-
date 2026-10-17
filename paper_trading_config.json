@@ -10,6 +10,15 @@
   "git_remote": "lifox",
   "git_branch": "master",
   "git_sync_interval_seconds": 900,
+  "telegram": {
+    "enabled": true,
+    "bot_token": "",
+    "chat_id": "",
+    "notify_on_stop_loss": true,
+    "notify_on_trades": true,
+    "notify_on_rebalance": true,
+    "notify_on_eod": true
+  },
   "cost_model": {
     "brokerage_bps": 0.0,
     "exchange_transaction_bps": 0.3,

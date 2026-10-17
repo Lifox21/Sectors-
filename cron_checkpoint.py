@@ -16,6 +16,8 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from telegram_notifier import notifier
+
 # Ensure UTF-8 output on Windows
 if sys.platform == "win32":
     try:
@@ -109,6 +111,7 @@ def run_watchdog(remote: str = "lifox") -> None:
                     cwd=str(ROOT_DIR),
                     creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
                 )
+            notifier.notify_system_alert("Bot Daemon Auto-Recovered", "Watchdog detected the trading bot was stopped during active market hours and automatically launched it.")
         else:
             # Check if systemd service exists
             res = subprocess.run(["systemctl", "is-active", "hmm_bot"], capture_output=True, text=True)
@@ -117,6 +120,7 @@ def run_watchdog(remote: str = "lifox") -> None:
             else:
                 logger.warning("Watchdog: Restarting systemd service hmm_bot...")
                 subprocess.run(["sudo", "systemctl", "restart", "hmm_bot"])
+                notifier.notify_system_alert("Bot Daemon Auto-Recovered", "Watchdog restarted systemd service hmm_bot on Linux VPS.")
 
 
 def main() -> None:
@@ -144,8 +148,34 @@ def main() -> None:
     rc = run_bot_once(remote=args.remote, branch=args.branch, force_active=force)
     if rc == 0:
         logger.info(f"=== Cron Action [{args.action.upper()}] Completed Successfully ===")
+        # If market close or EOD sync, deliver summary report to Telegram
+        if args.action in ["market-close", "eod-sync"]:
+            try:
+                from paper_trading import load_config, load_state, evaluate_sectors
+                cfg = load_config()
+                state = load_state(float(cfg.get("initial_capital", 150000.0)))
+                nav = float(state.get("nav_history", [{}])[-1].get("nav", state.get("cash", 150000.0)))
+                initial = float(state.get("initial_capital", 150000.0))
+                cash = float(state.get("cash", 0.0))
+                holdings = state.get("holdings", {})
+                now_d = datetime.now(IST).strftime("%Y-%m-%d")
+                sec_res = evaluate_sectors(now_d)
+                active = [s for s, r in sec_res.items() if r.get("state") == 0]
+                notifier.notify_eod_summary(
+                    nav=nav,
+                    initial_capital=initial,
+                    cash=cash,
+                    holdings=holdings,
+                    active_sectors=active,
+                )
+            except Exception as eod_exc:
+                logger.warning(f"Failed to send Telegram EOD summary: {eod_exc}")
     else:
         logger.error(f"=== Cron Action [{args.action.upper()}] Failed with exit code {rc} ===")
+        notifier.notify_system_alert(
+            title=f"Cron Checkpoint [{args.action.upper()}] Failed",
+            details=f"The scheduled cron task failed with exit code {rc}. Check scratch/cron_run.log for details."
+        )
         sys.exit(rc)
 
 

@@ -12,6 +12,8 @@ Data_Enhanced.csv
 scratch/daily_run_log.txt
 scratch/*.log
 summary_temp.csv
+.env
+*.env
 
 # Media & Documentation formats
 *.pdf
